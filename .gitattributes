@@ -1,0 +1,11 @@
+# Fuerza finales de linea LF en el repositorio para todos los archivos de
+# texto. Sin esto, cada integrante commitea con los finales de linea de su
+# sistema y aparecen diffs enteros de archivos que nadie toco.
+* text=auto eol=lf
+
+# Binarios: que git no intente normalizarlos
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ttf  binary
+*.otf  binary

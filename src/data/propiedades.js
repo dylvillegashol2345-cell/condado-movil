@@ -157,7 +157,7 @@ export const propiedades = [
     Estado: "Disponible",
     PanelesSolares: false,
     AislamientoTermico: false,
-    Imagen: "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=800&q=70",
+    Imagen: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=70&flip=h",
   },
 ];
 

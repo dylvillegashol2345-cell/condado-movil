@@ -66,8 +66,8 @@ regla RN1 del sistema Grupo Condado copiada sin cambios desde el proyecto web.
 
 ## Stack
 
-- Expo SDK 54 + Expo Router
-- React Native 0.81 · React 19
+- Expo SDK 57 + Expo Router
+- React Native 0.86 · React 19
 - JavaScript (sin TypeScript)
 - styled-components/native + ThemeProvider
 - @expo/vector-icons
@@ -82,7 +82,7 @@ npm install
 npx expo start
 ```
 
-Escanear el código QR con la app **Expo Go** (SDK 54) desde un celular conectado a la
+Escanear el código QR con la app **Expo Go** (SDK 57, la de Play Store) desde un celular conectado a la
 **misma red WiFi** que la computadora.
 
 Si la red del lugar aísla los dispositivos entre sí, usar `npx expo start --tunnel`.

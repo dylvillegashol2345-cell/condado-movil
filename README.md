@@ -36,7 +36,7 @@ tener margen.
 
 | # | Feature | Estado |
 |---|---|---|
-| 1 | Consultar el catálogo de propiedades | 🟡 En curso — FlatList listo, falta conectar la API |
+| 1 | Consultar el catálogo de propiedades | 🟢 Terminada — FlatList conectado a la API del sistema |
 | 2 | Buscar propiedades por texto | 🟢 Terminada — busca por barrio, calle, localidad y tipo |
 | 3 | Filtrar propiedades por tipo, localidad y rango de precio | ⚪ Pendiente |
 | 4 | Consultar el detalle de una propiedad | ⚪ Pendiente |

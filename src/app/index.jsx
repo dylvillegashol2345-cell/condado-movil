@@ -1,28 +1,31 @@
-import { useState } from "react";
-import { FlatList } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
 import Buscador from "../components/Buscador";
 import Encabezado from "../components/Encabezado";
+import ErrorCarga from "../components/ErrorCarga";
 import PropiedadCard from "../components/PropiedadCard";
 import SinResultados from "../components/SinResultados";
-import { propiedades } from "../data/propiedades";
+import { obtenerPropiedades } from "../services/propiedades";
 import { localidadLabel, tipoLabel } from "../utils/catalogos";
+import { normalizarImagen } from "../utils/imagenes";
 import { calcularClaseEnergetica } from "../utils/reglas";
 
 /* Pantalla principal — catálogo de propiedades.
 
-   Unidad 2:
-   - ScrollView reemplazado por FlatList.
-   - Primer estado del proyecto: el texto del buscador. Se guarda con
-     useState porque cambia mientras la app está abierta y la lista
-     tiene que volver a dibujarse con cada tecla.
+   Unidad 2: los datos ya no salen de un archivo, vienen de la API del
+   sistema Grupo Condado. Tres estados conviven acá:
+   - propiedades: lo que devolvió la API
+   - cargando: para mostrar el spinner mientras viaja el pedido
+   - error: si no se pudo llegar al servidor
 
-   El filtrado se hace sobre una copia: nunca se modifica el arreglo
-   original de propiedades. */
+   Los componentes no cambiaron nada respecto de la Unidad 1: la API
+   devuelve las claves en PascalCase, iguales a las del archivo de
+   datos estáticos. Esa fue la razón de escribirlo así desde el inicio. */
 
-/* Busqueda sin tildes: nadie escribe "Cosquin" con acento al buscar.
+/* Búsqueda sin tildes: nadie escribe "Cosquín" con acento al buscar.
    Se reemplazan a mano en vez de usar normalize("NFD"), porque el soporte
    Unicode de Hermes (el motor JS de React Native) no es el del navegador. */
 const ACENTOS = { "á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u", "ñ": "n" };
@@ -45,7 +48,48 @@ function coincide(propiedad, texto) {
 }
 
 export default function Inicio() {
+  const [propiedades, setPropiedades] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
   const [busqueda, setBusqueda] = useState("");
+
+  const cargarPropiedades = async () => {
+    setCargando(true);
+    setError(null);
+    try {
+      const datos = await obtenerPropiedades();
+      setPropiedades(datos);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      /* finally se ejecuta siempre, salga bien o mal: si el spinner
+         quedara prendido tras un error, la app parecería colgada. */
+      setCargando(false);
+    }
+  };
+
+  useEffect(() => {
+    cargarPropiedades();
+  }, []);
+
+  if (cargando) {
+    return (
+      <Pantalla edges={["top"]}>
+        <Centrado>
+          <ActivityIndicator size="large" color="#6c2d20" />
+          <Cargando>Cargando propiedades…</Cargando>
+        </Centrado>
+      </Pantalla>
+    );
+  }
+
+  if (error) {
+    return (
+      <Pantalla edges={["top"]}>
+        <ErrorCarga mensaje={error} onReintentar={cargarPropiedades} />
+      </Pantalla>
+    );
+  }
 
   const texto = normalizar(busqueda.trim());
   const filtradas = propiedades.filter((p) => coincide(p, texto));
@@ -68,7 +112,7 @@ export default function Inicio() {
         renderItem={({ item }) => (
           <Fila>
             <PropiedadCard
-              imagen={item.Imagen}
+              imagen={normalizarImagen(item.Imagen)}
               tipo={tipoLabel(item.IdTipo)}
               precio={item.Precio}
               barrio={item.Barrio}
@@ -92,6 +136,18 @@ export default function Inicio() {
 const Pantalla = styled(SafeAreaView)`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.bg};
+`;
+
+const Centrado = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Cargando = styled.Text`
+  margin-top: 12px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const Fila = styled.View`

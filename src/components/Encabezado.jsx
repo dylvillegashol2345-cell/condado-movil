@@ -16,6 +16,7 @@ export default function Encabezado({ cantidad }) {
 const Fondo = styled.View`
   background-color: ${({ theme }) => theme.colors.condado};
   padding: 28px 20px 24px;
+  margin-bottom: 20px;
 `;
 
 const Marca = styled.Text`

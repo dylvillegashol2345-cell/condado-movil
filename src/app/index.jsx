@@ -1,33 +1,70 @@
+import { useState } from "react";
 import { FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
+import Buscador from "../components/Buscador";
 import Encabezado from "../components/Encabezado";
 import PropiedadCard from "../components/PropiedadCard";
+import SinResultados from "../components/SinResultados";
 import { propiedades } from "../data/propiedades";
 import { localidadLabel, tipoLabel } from "../utils/catalogos";
 import { calcularClaseEnergetica } from "../utils/reglas";
 
 /* Pantalla principal — catálogo de propiedades.
 
-   Unidad 2: se reemplazó ScrollView por FlatList. A diferencia de
-   ScrollView, que monta todos los elementos de una, FlatList renderiza
-   solo los que están visibles en pantalla. Con 10 propiedades no se
-   nota, pero cuando los datos vengan de la API van a ser muchas más.
+   Unidad 2:
+   - ScrollView reemplazado por FlatList.
+   - Primer estado del proyecto: el texto del buscador. Se guarda con
+     useState porque cambia mientras la app está abierta y la lista
+     tiene que volver a dibujarse con cada tecla.
 
-   Las tres props obligatorias de FlatList son data, keyExtractor y
-   renderItem. El Encabezado va como ListHeaderComponent para que
-   scrollee junto con la lista en vez de quedar fijo arriba. */
+   El filtrado se hace sobre una copia: nunca se modifica el arreglo
+   original de propiedades. */
+
+/* Busqueda sin tildes: nadie escribe "Cosquin" con acento al buscar.
+   Se reemplazan a mano en vez de usar normalize("NFD"), porque el soporte
+   Unicode de Hermes (el motor JS de React Native) no es el del navegador. */
+const ACENTOS = { "á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u", "ñ": "n" };
+
+function normalizar(valor) {
+  return String(valor)
+    .toLowerCase()
+    .replace(/[áéíóúüñ]/g, (c) => ACENTOS[c]);
+}
+
+function coincide(propiedad, texto) {
+  if (!texto) return true;
+  const campos = [
+    propiedad.Barrio,
+    propiedad.Calle,
+    localidadLabel(propiedad.IdLocalidad),
+    tipoLabel(propiedad.IdTipo),
+  ];
+  return campos.some((campo) => normalizar(campo).includes(texto));
+}
 
 export default function Inicio() {
+  const [busqueda, setBusqueda] = useState("");
+
+  const texto = normalizar(busqueda.trim());
+  const filtradas = propiedades.filter((p) => coincide(p, texto));
+
   return (
     <Pantalla edges={["top"]}>
       <FlatList
-        data={propiedades}
+        data={filtradas}
         keyExtractor={(item) => String(item.IdPropiedad)}
-        ListHeaderComponent={<Encabezado cantidad={propiedades.length} />}
         contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        ListHeaderComponent={
+          <>
+            <Encabezado cantidad={filtradas.length} />
+            <Buscador valor={busqueda} onCambiar={setBusqueda} />
+          </>
+        }
+        ListEmptyComponent={<SinResultados busqueda={busqueda.trim()} />}
         renderItem={({ item }) => (
           <Fila>
             <PropiedadCard
@@ -57,8 +94,6 @@ const Pantalla = styled(SafeAreaView)`
   background-color: ${({ theme }) => theme.colors.bg};
 `;
 
-/* El padding lateral va por fila y no en el contenedor, para que el
-   Encabezado siga ocupando todo el ancho de la pantalla. */
 const Fila = styled.View`
   padding: 0 16px;
 `;

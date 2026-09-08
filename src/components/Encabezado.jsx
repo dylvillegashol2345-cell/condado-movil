@@ -8,7 +8,11 @@ export default function Encabezado({ cantidad }) {
     <Fondo>
       <Marca>Grupo Condado</Marca>
       <Bajada>Propiedades sustentables en Córdoba</Bajada>
-      <Contador>{cantidad} propiedades disponibles</Contador>
+      <Contador>
+        {cantidad === 1
+          ? "1 propiedad disponible"
+          : `${cantidad} propiedades disponibles`}
+      </Contador>
     </Fondo>
   );
 }

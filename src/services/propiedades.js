@@ -5,7 +5,10 @@ import { API_URL, MSG_SIN_API } from "./api";
    El backend devuelve DataTable, así que el JSON llega siempre como un
    array de objetos con las claves en PascalCase — las mismas que usaba
    el archivo de datos estáticos de la Unidad 1. Por eso los componentes
-   no necesitan ningún cambio. */
+   no necesitan ningún cambio.
+
+   Ojo con un detalle del backend: un GET por id también devuelve un
+   array, de una sola fila, no un objeto suelto. */
 
 const TIMEOUT_MS = 10000;
 
@@ -13,22 +16,14 @@ const TIMEOUT_MS = 10000;
    —por ejemplo cuando un firewall descarta los paquetes en silencio— la
    promesa queda pendiente para siempre y el spinner no se apaga nunca.
    AbortController corta la espera y la convierte en un error visible. */
-async function fetchConTimeout(url) {
+async function pedir(ruta) {
+  const url = `${API_URL}${ruta}`;
   const controlador = new AbortController();
   const reloj = setTimeout(() => controlador.abort(), TIMEOUT_MS);
-  try {
-    return await fetch(url, { signal: controlador.signal });
-  } finally {
-    clearTimeout(reloj);
-  }
-}
 
-export async function obtenerPropiedades() {
-  const url = `${API_URL}/Propiedad`;
   let respuesta;
-
   try {
-    respuesta = await fetchConTimeout(url);
+    respuesta = await fetch(url, { signal: controlador.signal });
   } catch (e) {
     if (e.name === "AbortError") {
       throw new Error(
@@ -43,12 +38,27 @@ export async function obtenerPropiedades() {
        Se adjuntan la URL y el error crudo: sin eso, diagnosticar un
        problema de red desde un celular es adivinar a ciegas. */
     throw new Error(`${MSG_SIN_API}\n\nURL: ${url}\nDetalle: ${e.message}`);
+  } finally {
+    clearTimeout(reloj);
   }
 
   if (!respuesta.ok) {
     throw new Error(`El servidor respondió ${respuesta.status}.\n\nURL: ${url}`);
   }
 
-  const datos = await respuesta.json();
+  return respuesta.json();
+}
+
+export async function obtenerPropiedades() {
+  const datos = await pedir("/Propiedad");
   return Array.isArray(datos) ? datos : [];
+}
+
+export async function obtenerPropiedad(id) {
+  const datos = await pedir(`/Propiedad/${id}`);
+  const fila = Array.isArray(datos) ? datos[0] : datos;
+  if (!fila) {
+    throw new Error("No encontramos esa propiedad. Puede que ya no esté publicada.");
+  }
+  return fila;
 }

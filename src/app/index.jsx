@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,15 +16,12 @@ import { calcularClaseEnergetica } from "../utils/reglas";
 
 /* Pantalla principal — catálogo de propiedades.
 
-   Unidad 2: los datos ya no salen de un archivo, vienen de la API del
-   sistema Grupo Condado. Tres estados conviven acá:
-   - propiedades: lo que devolvió la API
-   - cargando: para mostrar el spinner mientras viaja el pedido
-   - error: si no se pudo llegar al servidor
+   Los datos vienen de la API del sistema Grupo Condado. Tres estados
+   conviven acá: las propiedades, el spinner de carga y el error.
 
-   Los componentes no cambiaron nada respecto de la Unidad 1: la API
-   devuelve las claves en PascalCase, iguales a las del archivo de
-   datos estáticos. Esa fue la razón de escribirlo así desde el inicio. */
+   Cada card está envuelta en un <Link> que lleva al detalle. Con asChild,
+   el Link no dibuja nada propio: le pasa el comportamiento de navegación
+   al TouchableOpacity que tiene adentro. */
 
 /* Búsqueda sin tildes: nadie escribe "Cosquín" con acento al buscar.
    Se reemplazan a mano en vez de usar normalize("NFD"), porque el soporte
@@ -111,21 +109,25 @@ export default function Inicio() {
         ListEmptyComponent={<SinResultados busqueda={busqueda.trim()} />}
         renderItem={({ item }) => (
           <Fila>
-            <PropiedadCard
-              imagen={normalizarImagen(item.Imagen)}
-              tipo={tipoLabel(item.IdTipo)}
-              precio={item.Precio}
-              barrio={item.Barrio}
-              calle={item.Calle}
-              numeracion={item.Numeracion}
-              localidad={localidadLabel(item.IdLocalidad)}
-              superficie={item.Superficie}
-              claseEnergetica={calcularClaseEnergetica(
-                item.PanelesSolares,
-                item.AislamientoTermico
-              )}
-              panelesSolares={item.PanelesSolares}
-            />
+            <Link href={`/propiedad/${item.IdPropiedad}`} asChild>
+              <Tocable activeOpacity={0.85}>
+                <PropiedadCard
+                  imagen={normalizarImagen(item.Imagen)}
+                  tipo={tipoLabel(item.IdTipo)}
+                  precio={item.Precio}
+                  barrio={item.Barrio}
+                  calle={item.Calle}
+                  numeracion={item.Numeracion}
+                  localidad={localidadLabel(item.IdLocalidad)}
+                  superficie={item.Superficie}
+                  claseEnergetica={calcularClaseEnergetica(
+                    item.PanelesSolares,
+                    item.AislamientoTermico
+                  )}
+                  panelesSolares={item.PanelesSolares}
+                />
+              </Tocable>
+            </Link>
           </Fila>
         )}
       />
@@ -153,3 +155,5 @@ const Cargando = styled.Text`
 const Fila = styled.View`
   padding: 0 16px;
 `;
+
+const Tocable = styled.TouchableOpacity``;

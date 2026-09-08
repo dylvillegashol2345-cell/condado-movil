@@ -39,7 +39,7 @@ tener margen.
 | 1 | Consultar el catálogo de propiedades | 🟢 Terminada — FlatList conectado a la API |
 | 2 | Buscar propiedades por texto | 🟢 Terminada — barrio, calle, localidad y tipo |
 | 3 | Filtrar propiedades por tipo, localidad y rango de precio | ⚪ Pendiente |
-| 4 | Consultar el detalle de una propiedad | ⚪ Pendiente |
+| 4 | Consultar el detalle de una propiedad | 🟢 Terminada — ruta dinámica con ficha ambiental |
 | 5 | Gestionar propiedades favoritas | ⚪ Pendiente |
 | 6 | Solicitar una visita a una propiedad | ⚪ Pendiente |
 | 7 | Comparar propiedades (hasta 3, lado a lado) | ⚪ Pendiente |
@@ -135,10 +135,13 @@ proyecto sin editar nada y sigue funcionando cuando el router reparte otra IP.
 src/
 ├── app/                     Pantallas (Expo Router)
 │   ├── _layout.jsx          Layout raíz: ThemeProvider + Stack
-│   └── index.jsx            Pantalla principal — catálogo y búsqueda
+│   ├── index.jsx            Pantalla principal — catálogo y búsqueda
+│   └── propiedad/
+│       └── [id].jsx         Detalle de una propiedad (ruta dinámica)
 ├── components/
 │   ├── PropiedadCard.jsx    Componente reutilizable principal
 │   ├── EtiquetaEco.jsx      Etiqueta de clase energética
+│   ├── FichaAmbiental.jsx   Desempeño ambiental (reglas RN1 y RN2)
 │   ├── Encabezado.jsx       Cabecera de marca
 │   ├── Buscador.jsx         Campo de búsqueda (componente controlado)
 │   ├── SinResultados.jsx    Estado vacío de la búsqueda

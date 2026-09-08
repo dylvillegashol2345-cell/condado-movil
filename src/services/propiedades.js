@@ -24,24 +24,29 @@ async function fetchConTimeout(url) {
 }
 
 export async function obtenerPropiedades() {
+  const url = `${API_URL}/Propiedad`;
   let respuesta;
 
   try {
-    respuesta = await fetchConTimeout(`${API_URL}/Propiedad`);
+    respuesta = await fetchConTimeout(url);
   } catch (e) {
     if (e.name === "AbortError") {
       throw new Error(
-        `El servidor no respondió en ${TIMEOUT_MS / 1000} segundos. ` +
+        `El servidor no respondió en ${TIMEOUT_MS / 1000} segundos.\n\n` +
+          `URL: ${url}\n` +
           "Puede que el firewall de la PC esté bloqueando el puerto 56153."
       );
     }
     /* fetch solo lanza cuando no se pudo llegar al servidor: WiFi caída,
-       API apagada, IP equivocada. Un 404 o un 500 no pasan por acá. */
-    throw new Error(MSG_SIN_API);
+       API apagada, IP equivocada. Un 404 o un 500 no pasan por acá.
+
+       Se adjuntan la URL y el error crudo: sin eso, diagnosticar un
+       problema de red desde un celular es adivinar a ciegas. */
+    throw new Error(`${MSG_SIN_API}\n\nURL: ${url}\nDetalle: ${e.message}`);
   }
 
   if (!respuesta.ok) {
-    throw new Error(`El servidor respondió ${respuesta.status}.`);
+    throw new Error(`El servidor respondió ${respuesta.status}.\n\nURL: ${url}`);
   }
 
   const datos = await respuesta.json();

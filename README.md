@@ -40,7 +40,7 @@ tener margen.
 | 2 | Buscar propiedades por texto | 🟢 Terminada — barrio, calle, localidad y tipo |
 | 3 | Filtrar propiedades por tipo, localidad y rango de precio | 🟢 Terminada — chips combinables, filtrado local sobre el caché |
 | 4 | Consultar el detalle de una propiedad | 🟢 Terminada — ruta dinámica con ficha ambiental |
-| 5 | Gestionar propiedades favoritas | ⚪ Pendiente |
+| 5 | Gestionar propiedades favoritas | 🟢 Terminada — Zustand + persistencia en el dispositivo |
 | 6 | Solicitar una visita a una propiedad | ⚪ Pendiente |
 | 7 | Comparar propiedades (hasta 3, lado a lado) | ⚪ Pendiente |
 
@@ -91,6 +91,15 @@ sistema Grupo Condado copiada sin cambios desde el proyecto web.
   realmente tienen propiedades. El filtrado es local, sobre los datos cacheados.
 - Los filtros se combinan entre sí y con el buscador. Si nada coincide, el
   estado vacío ofrece volver a ver todas las propiedades.
+- **Favoritos con Zustand.** El store guarda la lista de ids y la persiste en
+  el dispositivo con AsyncStorage, así sobrevive al cierre de la app. El
+  corazón de cada card, el del detalle, el contador del header y la pantalla
+  de favoritos leen el mismo store sin pasarse props: es el caso contra el
+  prop drilling que plantea la Clase 4. La pantalla de favoritos reutiliza
+  `PropiedadCard` y la misma `queryKey` del catálogo, así que no pide nada
+  nuevo a la API.
+- Marcar o desmarcar nunca muta el arreglo: `filter` y spread devuelven uno
+  nuevo (la inmutabilidad de la Clase 2).
 
 ## Stack
 
@@ -100,6 +109,7 @@ sistema Grupo Condado copiada sin cambios desde el proyecto web.
 - styled-components/native + ThemeProvider
 - @expo/vector-icons
 - TanStack Query (react-query) y Zustand
+- AsyncStorage para persistir los favoritos
 
 ## Cómo correr el proyecto
 
@@ -148,12 +158,14 @@ proyecto sin editar nada y sigue funcionando cuando el router reparte otra IP.
 src/
 ├── app/                     Pantallas (Expo Router)
 │   ├── _layout.jsx          Layout raíz: ThemeProvider + Stack
-│   ├── index.jsx            Pantalla principal — catálogo y búsqueda
+│   ├── index.jsx            Pantalla principal — catálogo, búsqueda y filtros
+│   ├── favoritos.jsx        Propiedades marcadas como favoritas
 │   └── propiedad/
 │       └── [id].jsx         Detalle de una propiedad (ruta dinámica)
 ├── components/
 │   ├── PropiedadCard.jsx    Componente reutilizable principal
 │   ├── EtiquetaEco.jsx      Etiqueta de clase energética
+│   ├── BotonFavorito.jsx    Corazón que lee y modifica el store
 │   ├── FichaAmbiental.jsx   Desempeño ambiental (reglas RN1 y RN2)
 │   ├── Encabezado.jsx       Cabecera de marca
 │   ├── Buscador.jsx         Campo de búsqueda (componente controlado)
@@ -161,8 +173,10 @@ src/
 │   ├── SinResultados.jsx    Estado vacío de la búsqueda
 │   └── ErrorCarga.jsx       Error de conexión con botón de reintentar
 ├── services/
-│   ├── api.js               Dirección de la API, deducida del host de Expo
-│   └── propiedades.js       GET api/Propiedad
+│   ├── api.js               Dirección de la API (variable de entorno o host de Expo)
+│   └── propiedades.js       GET api/Propiedad y GET api/Propiedad/{id}
+├── store/
+│   └── favoritos.js         Store de Zustand con persistencia
 ├── theme/
 │   └── theme.js             Paleta terracota de Grupo Condado
 └── utils/

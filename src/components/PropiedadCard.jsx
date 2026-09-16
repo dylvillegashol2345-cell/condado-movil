@@ -3,15 +3,20 @@ import styled from "styled-components/native";
 
 import { IMG_PROPIEDAD_FALLBACK } from "../utils/catalogos";
 import { money, superficie as fmtSuperficie } from "../utils/format";
+import BotonFavorito from "./BotonFavorito";
 import EtiquetaEco from "./EtiquetaEco";
 
 /* Componente reutilizable que representa una propiedad del catálogo.
    Toda la información entra por props: la card no sabe de dónde vienen
    los datos, así que en la Unidad 2 pasa a consumir la API sin tocarla.
 
-   Es el equivalente al MovieCard del ejemplo de la consigna. */
+   Es el equivalente al MovieCard del ejemplo de la consigna.
+
+   El corazón de favoritos no recibe nada por props más que el id: lee y
+   modifica el store global por su cuenta. */
 
 export default function PropiedadCard({
+  id,
   imagen,
   tipo,
   precio,
@@ -36,6 +41,9 @@ export default function PropiedadCard({
         <BadgeEco>
           <EtiquetaEco clase={claseEnergetica} />
         </BadgeEco>
+        <Favorito>
+          <BotonFavorito id={id} />
+        </Favorito>
       </Portada>
 
       <Cuerpo>
@@ -105,6 +113,12 @@ const BadgeTipoTexto = styled.Text`
 const BadgeEco = styled.View`
   position: absolute;
   top: 12px;
+  right: 12px;
+`;
+
+const Favorito = styled.View`
+  position: absolute;
+  bottom: 12px;
   right: 12px;
 `;
 

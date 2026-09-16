@@ -137,6 +137,7 @@ export default function Inicio() {
             <Link href={`/propiedad/${item.IdPropiedad}`} asChild>
               <Tocable activeOpacity={0.85}>
                 <PropiedadCard
+                  id={item.IdPropiedad}
                   imagen={normalizarImagen(item.Imagen)}
                   tipo={tipoLabel(item.IdTipo)}
                   precio={item.Precio}

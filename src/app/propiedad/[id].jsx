@@ -5,6 +5,7 @@ import { ActivityIndicator, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
+import BotonFavorito from "../../components/BotonFavorito";
 import ErrorCarga from "../../components/ErrorCarga";
 import EtiquetaEco from "../../components/EtiquetaEco";
 import FichaAmbiental from "../../components/FichaAmbiental";
@@ -75,6 +76,9 @@ export default function DetallePropiedad() {
           <VolverFlotante onPress={volver} activeOpacity={0.8}>
             <Ionicons name="arrow-back" size={22} color="#ffffff" />
           </VolverFlotante>
+          <FavoritoFlotante>
+            <BotonFavorito id={Number(id)} oscuro />
+          </FavoritoFlotante>
           <BadgeTipo>
             <BadgeTipoTexto>{tipoLabel(p.IdTipo)}</BadgeTipoTexto>
           </BadgeTipo>
@@ -159,6 +163,12 @@ const VolverFlotante = styled.TouchableOpacity`
   border-radius: 19px;
   align-items: center;
   justify-content: center;
+`;
+
+const FavoritoFlotante = styled.View`
+  position: absolute;
+  top: 14px;
+  right: 14px;
 `;
 
 const BadgeTipo = styled.View`

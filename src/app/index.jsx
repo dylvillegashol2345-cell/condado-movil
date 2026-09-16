@@ -8,23 +8,29 @@ import styled from "styled-components/native";
 import Buscador from "../components/Buscador";
 import Encabezado from "../components/Encabezado";
 import ErrorCarga from "../components/ErrorCarga";
+import FiltroChips from "../components/FiltroChips";
 import PropiedadCard from "../components/PropiedadCard";
 import SinResultados from "../components/SinResultados";
 import { obtenerPropiedades } from "../services/propiedades";
 import { localidadLabel, tipoLabel } from "../utils/catalogos";
+import {
+  OPCIONES_PRECIO,
+  OPCIONES_TIPO,
+  TODOS,
+  aplicarFiltros,
+  hayFiltrosActivos,
+  opcionesLocalidad,
+} from "../utils/filtros";
 import { normalizarImagen } from "../utils/imagenes";
 import { calcularClaseEnergetica } from "../utils/reglas";
 
 /* Pantalla principal — catálogo de propiedades.
 
-   Unidad 3: los datos del servidor los maneja TanStack Query. Un solo
-   useQuery reemplaza los tres useState (datos, cargando, error) y el
-   useEffect que teníamos. Además cachea: al volver del detalle, el
-   catálogo no vuelve a pedir la lista.
-
-   Lo que sigue siendo useState es el texto del buscador, porque es
-   estado de la interfaz, no del servidor. Esa es la división: TanStack
-   para lo que viene de la API, useState para lo que vive en la pantalla. */
+   Los datos del servidor los maneja TanStack Query (useQuery). Lo que
+   vive en useState es estado de la interfaz: el texto del buscador y los
+   tres filtros. Cada vez que uno cambia, React vuelve a dibujar la lista
+   con el resultado de aplicar búsqueda + filtros sobre los datos cacheados.
+   No se vuelve a pedir nada a la API: filtrar es local. */
 
 /* Búsqueda sin tildes: nadie escribe "Cosquín" con acento al buscar.
    Se reemplazan a mano en vez de usar normalize("NFD"), porque el soporte
@@ -50,11 +56,10 @@ function coincide(propiedad, texto) {
 
 export default function Inicio() {
   const [busqueda, setBusqueda] = useState("");
+  const [tipo, setTipo] = useState(TODOS);
+  const [localidad, setLocalidad] = useState(TODOS);
+  const [precio, setPrecio] = useState(TODOS);
 
-  /* queryKey: identificador único de esta consulta en el caché. Cualquier
-     pantalla que use la misma key comparte el mismo dato.
-     queryFn: la función que hace el pedido. Si lanza, useQuery lo captura
-     y lo expone en `error`, sin try/catch de nuestro lado. */
   const {
     data: propiedades = [],
     isLoading,
@@ -84,8 +89,21 @@ export default function Inicio() {
     );
   }
 
+  const filtros = { tipo, localidad, precio };
   const texto = normalizar(busqueda.trim());
-  const filtradas = propiedades.filter((p) => coincide(p, texto));
+  const filtradas = aplicarFiltros(propiedades, filtros).filter((p) => coincide(p, texto));
+
+  const limpiarTodo = () => {
+    setBusqueda("");
+    setTipo(TODOS);
+    setLocalidad(TODOS);
+    setPrecio(TODOS);
+  };
+
+  /* Las localidades se calculan con la lista completa, no con la filtrada:
+     si se armaran con lo ya filtrado, al elegir "Casas" desaparecerían
+     del selector las localidades que solo tienen departamentos. */
+  const localidades = opcionesLocalidad(propiedades);
 
   return (
     <Pantalla edges={["top"]}>
@@ -99,9 +117,21 @@ export default function Inicio() {
           <>
             <Encabezado cantidad={filtradas.length} />
             <Buscador valor={busqueda} onCambiar={setBusqueda} />
+            <FiltroChips titulo="Tipo" opciones={OPCIONES_TIPO} activo={tipo} onCambiar={setTipo} />
+            {localidades.length > 2 ? (
+              <FiltroChips titulo="Localidad" opciones={localidades} activo={localidad} onCambiar={setLocalidad} />
+            ) : null}
+            <FiltroChips titulo="Precio" opciones={OPCIONES_PRECIO} activo={precio} onCambiar={setPrecio} />
+            <Separador />
           </>
         }
-        ListEmptyComponent={<SinResultados busqueda={busqueda.trim()} />}
+        ListEmptyComponent={
+          <SinResultados
+            busqueda={busqueda.trim()}
+            hayFiltros={hayFiltrosActivos(filtros)}
+            onLimpiar={limpiarTodo}
+          />
+        }
         renderItem={({ item }) => (
           <Fila>
             <Link href={`/propiedad/${item.IdPropiedad}`} asChild>
@@ -145,6 +175,10 @@ const Cargando = styled.Text`
   margin-top: 12px;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
+const Separador = styled.View`
+  height: 6px;
 `;
 
 const Fila = styled.View`

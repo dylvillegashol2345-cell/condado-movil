@@ -1,22 +1,34 @@
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
-/* Estado vacío del catálogo. Distingue dos situaciones que se ven igual
-   pero significan cosas distintas: una búsqueda sin coincidencias, y un
-   catálogo que directamente no tiene propiedades publicadas. */
+/* Estado vacío del catálogo. Tres situaciones que se ven igual pero
+   significan cosas distintas: búsqueda sin coincidencias, filtros que no
+   dejan pasar nada, o un catálogo directamente sin propiedades. En los dos
+   primeros casos se ofrece un botón para limpiar y volver a ver todo. */
 
-export default function SinResultados({ busqueda }) {
+export default function SinResultados({ busqueda, hayFiltros, onLimpiar }) {
   const hayBusqueda = Boolean(busqueda);
+  const restringido = hayBusqueda || hayFiltros;
+
+  let detalle = "Cuando la inmobiliaria publique propiedades van a aparecer acá.";
+  if (hayBusqueda && hayFiltros) {
+    detalle = `Ninguna coincide con “${busqueda}” y los filtros elegidos.`;
+  } else if (hayBusqueda) {
+    detalle = `Ninguna coincide con “${busqueda}”. Probá con otro barrio o localidad.`;
+  } else if (hayFiltros) {
+    detalle = "Ninguna cumple con los filtros elegidos.";
+  }
 
   return (
     <Caja>
       <Ionicons name="home-outline" size={40} color="#c4705f" />
-      <Titulo>{hayBusqueda ? "No encontramos propiedades" : "Todavía no hay propiedades"}</Titulo>
-      <Detalle>
-        {hayBusqueda
-          ? `Ninguna coincide con “${busqueda}”. Probá con otro barrio o localidad.`
-          : "Cuando la inmobiliaria publique propiedades van a aparecer acá."}
-      </Detalle>
+      <Titulo>{restringido ? "No encontramos propiedades" : "Todavía no hay propiedades"}</Titulo>
+      <Detalle>{detalle}</Detalle>
+      {restringido && onLimpiar ? (
+        <Boton onPress={onLimpiar} activeOpacity={0.8}>
+          <BotonTexto>Ver todas las propiedades</BotonTexto>
+        </Boton>
+      ) : null}
     </Caja>
   );
 }
@@ -39,4 +51,18 @@ const Detalle = styled.Text`
   text-align: center;
   margin-top: 6px;
   line-height: 19px;
+`;
+
+const Boton = styled.TouchableOpacity`
+  margin-top: 18px;
+  padding: 10px 18px;
+  border-radius: ${({ theme }) => theme.radius.sm}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.colors.condado};
+`;
+
+const BotonTexto = styled.Text`
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.condado};
 `;

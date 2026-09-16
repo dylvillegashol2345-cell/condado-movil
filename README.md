@@ -38,7 +38,7 @@ tener margen.
 |---|---|---|
 | 1 | Consultar el catálogo de propiedades | 🟢 Terminada — FlatList conectado a la API |
 | 2 | Buscar propiedades por texto | 🟢 Terminada — barrio, calle, localidad y tipo |
-| 3 | Filtrar propiedades por tipo, localidad y rango de precio | ⚪ Pendiente |
+| 3 | Filtrar propiedades por tipo, localidad y rango de precio | 🟢 Terminada — chips combinables, filtrado local sobre el caché |
 | 4 | Consultar el detalle de una propiedad | 🟢 Terminada — ruta dinámica con ficha ambiental |
 | 5 | Gestionar propiedades favoritas | ⚪ Pendiente |
 | 6 | Solicitar una visita a una propiedad | ⚪ Pendiente |
@@ -80,6 +80,18 @@ La clase energética no viene en los datos: se calcula en tiempo de render con
 `calcularClaseEnergetica()` de `src/utils/reglas.js`, que es la regla RN1 del
 sistema Grupo Condado copiada sin cambios desde el proyecto web.
 
+### Unidad 3 — Estado, caché y filtros
+
+- **TanStack Query** reemplaza el `useEffect` + `useState` + `fetch` manual.
+  Un `useQuery` entrega `data`, `isLoading` y `error` resueltos, y cachea:
+  volver del detalle al catálogo no vuelve a pedir la lista.
+- **Filtros por tipo, localidad y rango de precio**, con el patrón de chips de
+  la Clase 3: `useState` + `TouchableOpacity`. `FiltroChips` es un componente
+  controlado que se reutiliza tres veces. Las localidades se arman con las que
+  realmente tienen propiedades. El filtrado es local, sobre los datos cacheados.
+- Los filtros se combinan entre sí y con el buscador. Si nada coincide, el
+  estado vacío ofrece volver a ver todas las propiedades.
+
 ## Stack
 
 - Expo SDK 57 + Expo Router
@@ -87,6 +99,7 @@ sistema Grupo Condado copiada sin cambios desde el proyecto web.
 - JavaScript (sin TypeScript)
 - styled-components/native + ThemeProvider
 - @expo/vector-icons
+- TanStack Query (react-query) y Zustand
 
 ## Cómo correr el proyecto
 
@@ -144,6 +157,7 @@ src/
 │   ├── FichaAmbiental.jsx   Desempeño ambiental (reglas RN1 y RN2)
 │   ├── Encabezado.jsx       Cabecera de marca
 │   ├── Buscador.jsx         Campo de búsqueda (componente controlado)
+│   ├── FiltroChips.jsx      Fila de chips de filtro (componente controlado)
 │   ├── SinResultados.jsx    Estado vacío de la búsqueda
 │   └── ErrorCarga.jsx       Error de conexión con botón de reintentar
 ├── services/
@@ -155,5 +169,6 @@ src/
     ├── reglas.js            Reglas de negocio RN1–RN5 del sistema
     ├── catalogos.js         Tipos de propiedad y localidades
     ├── format.js            Formato de precios y superficies
+    ├── filtros.js           Opciones y lógica de los filtros del catálogo
     └── imagenes.js          Normalización de las rutas de imagen
 ```

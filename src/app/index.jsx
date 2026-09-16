@@ -1,5 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -16,12 +17,14 @@ import { calcularClaseEnergetica } from "../utils/reglas";
 
 /* Pantalla principal — catálogo de propiedades.
 
-   Los datos vienen de la API del sistema Grupo Condado. Tres estados
-   conviven acá: las propiedades, el spinner de carga y el error.
+   Unidad 3: los datos del servidor los maneja TanStack Query. Un solo
+   useQuery reemplaza los tres useState (datos, cargando, error) y el
+   useEffect que teníamos. Además cachea: al volver del detalle, el
+   catálogo no vuelve a pedir la lista.
 
-   Cada card está envuelta en un <Link> que lleva al detalle. Con asChild,
-   el Link no dibuja nada propio: le pasa el comportamiento de navegación
-   al TouchableOpacity que tiene adentro. */
+   Lo que sigue siendo useState es el texto del buscador, porque es
+   estado de la interfaz, no del servidor. Esa es la división: TanStack
+   para lo que viene de la API, useState para lo que vive en la pantalla. */
 
 /* Búsqueda sin tildes: nadie escribe "Cosquín" con acento al buscar.
    Se reemplazan a mano en vez de usar normalize("NFD"), porque el soporte
@@ -46,31 +49,23 @@ function coincide(propiedad, texto) {
 }
 
 export default function Inicio() {
-  const [propiedades, setPropiedades] = useState([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState(null);
   const [busqueda, setBusqueda] = useState("");
 
-  const cargarPropiedades = async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      const datos = await obtenerPropiedades();
-      setPropiedades(datos);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      /* finally se ejecuta siempre, salga bien o mal: si el spinner
-         quedara prendido tras un error, la app parecería colgada. */
-      setCargando(false);
-    }
-  };
+  /* queryKey: identificador único de esta consulta en el caché. Cualquier
+     pantalla que use la misma key comparte el mismo dato.
+     queryFn: la función que hace el pedido. Si lanza, useQuery lo captura
+     y lo expone en `error`, sin try/catch de nuestro lado. */
+  const {
+    data: propiedades = [],
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["propiedades"],
+    queryFn: obtenerPropiedades,
+  });
 
-  useEffect(() => {
-    cargarPropiedades();
-  }, []);
-
-  if (cargando) {
+  if (isLoading) {
     return (
       <Pantalla edges={["top"]}>
         <Centrado>
@@ -84,7 +79,7 @@ export default function Inicio() {
   if (error) {
     return (
       <Pantalla edges={["top"]}>
-        <ErrorCarga mensaje={error} onReintentar={cargarPropiedades} />
+        <ErrorCarga mensaje={error.message} onReintentar={refetch} />
       </Pantalla>
     );
   }

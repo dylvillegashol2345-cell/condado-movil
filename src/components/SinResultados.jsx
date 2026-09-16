@@ -1,15 +1,22 @@
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
-/* Estado vacío: qué mostrar cuando la búsqueda no encuentra nada.
-   Sin esto la pantalla queda en blanco y parece que la app se rompió. */
+/* Estado vacío del catálogo. Distingue dos situaciones que se ven igual
+   pero significan cosas distintas: una búsqueda sin coincidencias, y un
+   catálogo que directamente no tiene propiedades publicadas. */
 
 export default function SinResultados({ busqueda }) {
+  const hayBusqueda = Boolean(busqueda);
+
   return (
     <Caja>
       <Ionicons name="home-outline" size={40} color="#c4705f" />
-      <Titulo>No encontramos propiedades</Titulo>
-      <Detalle>Ninguna coincide con “{busqueda}”. Probá con otro barrio o localidad.</Detalle>
+      <Titulo>{hayBusqueda ? "No encontramos propiedades" : "Todavía no hay propiedades"}</Titulo>
+      <Detalle>
+        {hayBusqueda
+          ? `Ninguna coincide con “${busqueda}”. Probá con otro barrio o localidad.`
+          : "Cuando la inmobiliaria publique propiedades van a aparecer acá."}
+      </Detalle>
     </Caja>
   );
 }

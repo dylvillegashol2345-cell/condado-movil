@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -20,38 +20,30 @@ import { calcularClaseEnergetica } from "../../utils/reglas";
    dinámica de Expo Router: /propiedad/1, /propiedad/2, etc. El valor
    llega por useLocalSearchParams.
 
-   Se recibe solo el id y se vuelve a pedir la propiedad a la API, en vez
-   de arrastrar el objeto entero por params. Así el detalle siempre
-   muestra el dato fresco, y funciona aunque se entre por un link directo
-   sin pasar por el catálogo. */
+   Unidad 3: el pedido a la API lo maneja useQuery. La queryKey incluye
+   el id, así cada propiedad tiene su propia entrada en el caché: abrir
+   la 1, volver, y abrir la 1 de nuevo no vuelve a pedirla. */
 
 export default function DetallePropiedad() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
-  const [propiedad, setPropiedad] = useState(null);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState(null);
-
-  const cargar = async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      setPropiedad(await obtenerPropiedad(id));
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  useEffect(() => {
-    cargar();
-  }, [id]);
+  const {
+    data: propiedad,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    /* ["propiedad", "1"] y ["propiedad", "2"] son entradas distintas del
+       caché. Si la key fuera solo ["propiedad"], todas compartirían el
+       mismo dato y mostrarían la última que se cargó. */
+    queryKey: ["propiedad", id],
+    queryFn: () => obtenerPropiedad(id),
+  });
 
   const volver = () => (router.canGoBack() ? router.back() : router.replace("/"));
 
-  if (cargando) {
+  if (isLoading) {
     return (
       <Pantalla edges={["top"]}>
         <Centrado>
@@ -67,7 +59,7 @@ export default function DetallePropiedad() {
         <Volver onPress={volver} activeOpacity={0.7}>
           <Ionicons name="arrow-back" size={22} color="#1a1209" />
         </Volver>
-        <ErrorCarga mensaje={error} onReintentar={cargar} />
+        <ErrorCarga mensaje={error.message} onReintentar={refetch} />
       </Pantalla>
     );
   }

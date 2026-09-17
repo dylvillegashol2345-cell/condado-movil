@@ -100,6 +100,11 @@ sistema Grupo Condado copiada sin cambios desde el proyecto web.
   nuevo a la API.
 - Marcar o desmarcar nunca muta el arreglo: `filter` y spread devuelven uno
   nuevo (la inmutabilidad de la Clase 2).
+- **Vista por localidad con `SectionList`.** Un selector de vista —también
+  hecho con `FiltroChips`— alterna entre la lista plana (`FlatList`) y los
+  mismos ítems agrupados bajo un encabezado por localidad (`SectionList`), con
+  el contador de cada sección. Las dos vistas comparten el header, los filtros,
+  el estado vacío y el mismo `PropiedadCard`: un componente, dos listas.
 
 ## Stack
 
@@ -184,5 +189,6 @@ src/
     ├── catalogos.js         Tipos de propiedad y localidades
     ├── format.js            Formato de precios y superficies
     ├── filtros.js           Opciones y lógica de los filtros del catálogo
+    ├── secciones.js         Agrupa propiedades por localidad para SectionList
     └── imagenes.js          Normalización de las rutas de imagen
 ```

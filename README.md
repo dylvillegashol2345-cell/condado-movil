@@ -41,7 +41,7 @@ tener margen.
 | 3 | Filtrar propiedades por tipo, localidad y rango de precio | 🟢 Terminada — chips combinables, filtrado local sobre el caché |
 | 4 | Consultar el detalle de una propiedad | 🟢 Terminada — ruta dinámica con ficha ambiental |
 | 5 | Gestionar propiedades favoritas | 🟢 Terminada — Zustand + persistencia en el dispositivo |
-| 6 | Solicitar una visita a una propiedad | ⚪ Pendiente |
+| 6 | Solicitar una visita a una propiedad | 🟢 Terminada — formulario con `useMutation`, llega a la base como Consulta |
 | 7 | Comparar propiedades (hasta 3, lado a lado) | ⚪ Pendiente |
 
 **Referencias:** ⚪ Pendiente · 🟡 En curso · 🟢 Terminada
@@ -105,6 +105,18 @@ sistema Grupo Condado copiada sin cambios desde el proyecto web.
   mismos ítems agrupados bajo un encabezado por localidad (`SectionList`), con
   el contador de cada sección. Las dos vistas comparten el header, los filtros,
   el estado vacío y el mismo `PropiedadCard`: un componente, dos listas.
+- **Solicitar una visita.** Primera pantalla que *escribe* en el sistema: un
+  formulario con validación (`useState`) que envía por `useMutation`, el
+  complemento de `useQuery` para mutaciones. Expone `isPending` y `error`
+  igual que las lecturas. Al enviar, la app muestra confirmación; si la API
+  falla, el error queda en pantalla y se puede reintentar.
+
+  La solicitud viaja como **`Consulta`, no como `Cita`**. `Cita` es el turno
+  interno del sistema: exige un cliente ya cargado y un agente asignado, cosas
+  que quien mira el catálogo no tiene. `Consulta` es el punto de entrada
+  documentado en PP1: la inmobiliaria la recibe, la deriva y recién ahí crea
+  la cita. El mensaje lleva el día y horario preferidos, y
+  `PropiedadInteres` la dirección completa con el ID.
 
 ## Stack
 
@@ -165,8 +177,10 @@ src/
 │   ├── _layout.jsx          Layout raíz: ThemeProvider + Stack
 │   ├── index.jsx            Pantalla principal — catálogo, búsqueda y filtros
 │   ├── favoritos.jsx        Propiedades marcadas como favoritas
-│   └── propiedad/
-│       └── [id].jsx         Detalle de una propiedad (ruta dinámica)
+│   ├── propiedad/
+│   │   └── [id].jsx         Detalle de una propiedad (ruta dinámica)
+│   └── visita/
+│       └── [id].jsx         Formulario de solicitud de visita
 ├── components/
 │   ├── PropiedadCard.jsx    Componente reutilizable principal
 │   ├── EtiquetaEco.jsx      Etiqueta de clase energética
@@ -178,8 +192,9 @@ src/
 │   ├── SinResultados.jsx    Estado vacío de la búsqueda
 │   └── ErrorCarga.jsx       Error de conexión con botón de reintentar
 ├── services/
-│   ├── api.js               Dirección de la API (variable de entorno o host de Expo)
-│   └── propiedades.js       GET api/Propiedad y GET api/Propiedad/{id}
+│   ├── api.js               Dirección de la API y cliente HTTP con timeout
+│   ├── propiedades.js       GET api/Propiedad y GET api/Propiedad/{id}
+│   └── consultas.js         POST api/Consulta (solicitud de visita)
 ├── store/
 │   └── favoritos.js         Store de Zustand con persistencia
 ├── theme/

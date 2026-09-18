@@ -1,4 +1,4 @@
-import { API_URL, MSG_SIN_API } from "./api";
+import { pedir } from "./api";
 
 /* Acceso a las propiedades de la API.
 
@@ -9,45 +9,6 @@ import { API_URL, MSG_SIN_API } from "./api";
 
    Ojo con un detalle del backend: un GET por id también devuelve un
    array, de una sola fila, no un objeto suelto. */
-
-const TIMEOUT_MS = 10000;
-
-/* fetch no tiene timeout propio: si el servidor no contesta ni rechaza
-   —por ejemplo cuando un firewall descarta los paquetes en silencio— la
-   promesa queda pendiente para siempre y el spinner no se apaga nunca.
-   AbortController corta la espera y la convierte en un error visible. */
-async function pedir(ruta) {
-  const url = `${API_URL}${ruta}`;
-  const controlador = new AbortController();
-  const reloj = setTimeout(() => controlador.abort(), TIMEOUT_MS);
-
-  let respuesta;
-  try {
-    respuesta = await fetch(url, { signal: controlador.signal });
-  } catch (e) {
-    if (e.name === "AbortError") {
-      throw new Error(
-        `El servidor no respondió en ${TIMEOUT_MS / 1000} segundos.\n\n` +
-          `URL: ${url}\n` +
-          "Puede que el firewall de la PC esté bloqueando el puerto 56153."
-      );
-    }
-    /* fetch solo lanza cuando no se pudo llegar al servidor: WiFi caída,
-       API apagada, IP equivocada. Un 404 o un 500 no pasan por acá.
-
-       Se adjuntan la URL y el error crudo: sin eso, diagnosticar un
-       problema de red desde un celular es adivinar a ciegas. */
-    throw new Error(`${MSG_SIN_API}\n\nURL: ${url}\nDetalle: ${e.message}`);
-  } finally {
-    clearTimeout(reloj);
-  }
-
-  if (!respuesta.ok) {
-    throw new Error(`El servidor respondió ${respuesta.status}.\n\nURL: ${url}`);
-  }
-
-  return respuesta.json();
-}
 
 export async function obtenerPropiedades() {
   const datos = await pedir("/Propiedad");

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -122,6 +122,13 @@ export default function DetallePropiedad() {
             panelesSolares={p.PanelesSolares}
             aislamientoTermico={p.AislamientoTermico}
           />
+
+          <Link href={`/visita/${p.IdPropiedad}`} asChild>
+            <BotonVisita activeOpacity={0.85}>
+              <Ionicons name="calendar-outline" size={18} color="#ffffff" />
+              <BotonVisitaTexto>Solicitar una visita</BotonVisitaTexto>
+            </BotonVisita>
+          </Link>
         </Cuerpo>
       </ScrollView>
     </Pantalla>
@@ -239,6 +246,23 @@ const Dato = styled.View`
 const DatoTexto = styled.Text`
   font-size: 13.5px;
   color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
+const BotonVisita = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: ${({ theme }) => theme.colors.condado};
+  padding: 15px;
+  border-radius: ${({ theme }) => theme.radius.sm}px;
+  margin-top: 22px;
+`;
+
+const BotonVisitaTexto = styled.Text`
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
 `;
 
 const Subtitulo = styled.Text`

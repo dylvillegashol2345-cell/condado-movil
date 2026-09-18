@@ -5,6 +5,7 @@ import { ActivityIndicator, FlatList, SectionList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
+import BarraComparar from "../components/BarraComparar";
 import Buscador from "../components/Buscador";
 import Encabezado from "../components/Encabezado";
 import ErrorCarga from "../components/ErrorCarga";
@@ -171,7 +172,7 @@ export default function Inicio() {
 
   const propsComunes = {
     keyExtractor: (item) => String(item.IdPropiedad),
-    contentContainerStyle: { paddingBottom: 32 },
+    contentContainerStyle: { paddingBottom: 96 },
     showsVerticalScrollIndicator: false,
     keyboardShouldPersistTaps: "handled",
     ListHeaderComponent: encabezado,
@@ -195,6 +196,7 @@ export default function Inicio() {
           renderSectionFooter={() => <SeccionPie />}
           stickySectionHeadersEnabled={false}
         />
+        <BarraComparar />
       </Pantalla>
     );
   }
@@ -202,6 +204,7 @@ export default function Inicio() {
   return (
     <Pantalla edges={["top"]}>
       <FlatList {...propsComunes} data={filtradas} />
+      <BarraComparar />
     </Pantalla>
   );
 }

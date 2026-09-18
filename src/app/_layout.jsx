@@ -35,6 +35,7 @@ export default function Layout() {
             <Stack.Screen name="propiedad/[id]" />
             <Stack.Screen name="favoritos" />
             <Stack.Screen name="visita/[id]" />
+            <Stack.Screen name="comparar" />
           </Stack>
         </ThemeProvider>
       </QueryClientProvider>

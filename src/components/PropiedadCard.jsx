@@ -3,6 +3,7 @@ import styled from "styled-components/native";
 
 import { IMG_PROPIEDAD_FALLBACK } from "../utils/catalogos";
 import { money, superficie as fmtSuperficie } from "../utils/format";
+import BotonComparar from "./BotonComparar";
 import BotonFavorito from "./BotonFavorito";
 import EtiquetaEco from "./EtiquetaEco";
 
@@ -69,6 +70,7 @@ export default function PropiedadCard({
               <MetaTexto>Paneles solares</MetaTexto>
             </MetaItem>
           ) : null}
+          <BotonComparar id={id} />
         </Meta>
       </Cuerpo>
     </Card>
@@ -156,6 +158,7 @@ const UbicacionTexto = styled.Text`
 const Meta = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
+  align-items: center;
   gap: 16px;
 `;
 

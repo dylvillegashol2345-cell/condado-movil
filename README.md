@@ -32,7 +32,7 @@ bonificación del 15%.
 ## Features
 
 Con 5 integrantes el alcance mínimo son 6 features. Se planificaron 7 para
-tener margen.
+tener margen. **Las 7 están terminadas.**
 
 | # | Feature | Estado |
 |---|---|---|
@@ -42,7 +42,7 @@ tener margen.
 | 4 | Consultar el detalle de una propiedad | 🟢 Terminada — ruta dinámica con ficha ambiental |
 | 5 | Gestionar propiedades favoritas | 🟢 Terminada — Zustand + persistencia en el dispositivo |
 | 6 | Solicitar una visita a una propiedad | 🟢 Terminada — formulario con `useMutation`, llega a la base como Consulta |
-| 7 | Comparar propiedades (hasta 3, lado a lado) | ⚪ Pendiente |
+| 7 | Comparar propiedades (hasta 3, lado a lado) | 🟢 Terminada — resalta el mejor valor de cada fila, con precio por m² |
 
 **Referencias:** ⚪ Pendiente · 🟡 En curso · 🟢 Terminada
 
@@ -117,6 +117,14 @@ sistema Grupo Condado copiada sin cambios desde el proyecto web.
   documentado en PP1: la inmobiliaria la recibe, la deriva y recién ahí crea
   la cita. El mensaje lleva el día y horario preferidos, y
   `PropiedadInteres` la dirección completa con el ID.
+- **Comparar propiedades.** Un toggle "Comparar" en cada card suma hasta tres
+  a un segundo store de Zustand (sin persistencia: una comparación es algo
+  del momento). Una barra flotante al pie del catálogo lleva a la pantalla de
+  comparación, que pone las elegidas lado a lado y **resalta el mejor valor de
+  cada fila**: menor precio, mayor superficie, mejor clase energética. Si todas
+  empatan, no resalta nada. Agrega una métrica que no está en los datos, el
+  **precio por m²**, que es lo que permite comparar una casa de 240 m² con un
+  departamento de 62. Todo es local: no pide nada a la API.
 
 ## Stack
 
@@ -177,6 +185,7 @@ src/
 │   ├── _layout.jsx          Layout raíz: ThemeProvider + Stack
 │   ├── index.jsx            Pantalla principal — catálogo, búsqueda y filtros
 │   ├── favoritos.jsx        Propiedades marcadas como favoritas
+│   ├── comparar.jsx         Comparación lado a lado de hasta 3 propiedades
 │   ├── propiedad/
 │   │   └── [id].jsx         Detalle de una propiedad (ruta dinámica)
 │   └── visita/
@@ -185,6 +194,8 @@ src/
 │   ├── PropiedadCard.jsx    Componente reutilizable principal
 │   ├── EtiquetaEco.jsx      Etiqueta de clase energética
 │   ├── BotonFavorito.jsx    Corazón que lee y modifica el store
+│   ├── BotonComparar.jsx    Toggle para sumar a la comparación (tope 3)
+│   ├── BarraComparar.jsx    Barra flotante que lleva a la comparación
 │   ├── FichaAmbiental.jsx   Desempeño ambiental (reglas RN1 y RN2)
 │   ├── Encabezado.jsx       Cabecera de marca
 │   ├── Buscador.jsx         Campo de búsqueda (componente controlado)
@@ -196,7 +207,8 @@ src/
 │   ├── propiedades.js       GET api/Propiedad y GET api/Propiedad/{id}
 │   └── consultas.js         POST api/Consulta (solicitud de visita)
 ├── store/
-│   └── favoritos.js         Store de Zustand con persistencia
+│   ├── favoritos.js         Store de Zustand con persistencia
+│   └── comparar.js          Store de Zustand para la comparación (sin persistir)
 ├── theme/
 │   └── theme.js             Paleta terracota de Grupo Condado
 └── utils/

@@ -184,6 +184,16 @@ salen del sistema Grupo Condado, no de un archivo.
 4. Visual Studio debe correr **como administrador**: registrar una URL que no
    sea `localhost` requiere privilegios elevados.
 
+### Cargar propiedades de prueba
+
+Con la API corriendo, este comando carga 31 propiedades de ejemplo en la base
+(casas, departamentos, lotes y terrenos de las 9 localidades, con las tres
+clases energéticas). Se puede correr más de una vez: no duplica.
+
+```bash
+npm run cargar-datos
+```
+
 La app **no tiene la IP escrita en el código**: la deduce del host del
 servidor de Expo (`src/services/api.js`). Así cada integrante corre el
 proyecto sin editar nada y sigue funcionando cuando el router reparte otra IP.
@@ -229,4 +239,7 @@ src/
     ├── filtros.js           Opciones y lógica de los filtros del catálogo
     ├── secciones.js         Agrupa propiedades por localidad para SectionList
     └── imagenes.js          Normalización de las rutas de imagen
+
+scripts/
+└── cargar-propiedades.js    Carga propiedades de prueba en la base por la API
 ```

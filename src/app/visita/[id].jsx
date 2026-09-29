@@ -17,8 +17,9 @@ function validar({ nombre, telefono }) {
     errores.nombre = "Ingresá tu nombre.";
   }
   const digitos = telefono.replace(/\D/g, "");
-  if (digitos.length < 6) {
-    errores.telefono = "Ingresá un teléfono válido para que te contactemos.";
+  const soloNumeros = /^[\d\s()+-]+$/.test(telefono.trim());
+  if (!soloNumeros || digitos.length < 6 || digitos.length > 15) {
+    errores.telefono = "Ingresá un teléfono válido: solo números, entre 6 y 15 dígitos.";
   }
   return errores;
 }

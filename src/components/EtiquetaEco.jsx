@@ -1,9 +1,5 @@
 import styled from "styled-components/native";
 
-/* Etiqueta de clase energética (RN1 del sistema Grupo Condado).
-   Componente reutilizable: recibe la clase por props y decide el color.
-   A = verde (paneles + aislación), B = ámbar (uno de los dos), C = gris. */
-
 function colorDeClase(theme, clase) {
   if (clase === "A") return theme.colors.ecoA;
   if (clase === "B") return theme.colors.ecoB;

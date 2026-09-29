@@ -1,11 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
-/* Estado vacío del catálogo. Tres situaciones que se ven igual pero
-   significan cosas distintas: búsqueda sin coincidencias, filtros que no
-   dejan pasar nada, o un catálogo directamente sin propiedades. En los dos
-   primeros casos se ofrece un botón para limpiar y volver a ver todo. */
-
 export default function SinResultados({ busqueda, hayFiltros, onLimpiar }) {
   const hayBusqueda = Boolean(busqueda);
   const restringido = hayBusqueda || hayFiltros;

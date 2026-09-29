@@ -3,25 +3,11 @@ import styled from "styled-components/native";
 
 import { useFavoritos } from "../store/favoritos";
 
-/* Corazón para marcar o desmarcar una propiedad como favorita.
-
-   Lee y modifica el store directamente: no recibe ni el estado ni la
-   acción por props. Se puede poner en cualquier lugar de la app y
-   funciona solo — el mismo botón sirve en la card del catálogo y en el
-   detalle.
-
-   El selector (estado) => estado.ids.includes(id) hace que este botón se
-   vuelva a dibujar únicamente cuando cambia SU propiedad, no cuando
-   cambia cualquier otro favorito. */
-
 export default function BotonFavorito({ id, tamano = 22, oscuro = false }) {
   const esFavorito = useFavoritos((estado) => estado.ids.includes(id));
   const alternar = useFavoritos((estado) => estado.alternar);
 
   const onPress = (evento) => {
-    /* En la web el botón queda dentro del <a> de la card: sin esto, tocar
-       el corazón también abriría el detalle. En el celular no hace falta,
-       pero no molesta. */
     evento?.preventDefault?.();
     evento?.stopPropagation?.();
     alternar(id);

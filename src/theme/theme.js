@@ -1,7 +1,3 @@
-/* Paleta terracota de Grupo Condado.
-   Los valores salen de los tokens :root de styles.css del sistema web,
-   para que la app y la web se lean como el mismo producto. */
-
 export const lightTheme = {
   colors: {
     condado:       "#6c2d20",
@@ -19,7 +15,6 @@ export const lightTheme = {
     textSecondary: "#6b5b52",
     textMuted:     "#a0918a",
 
-    /* Colores de la etiqueta de clase energética (RN1) */
     ecoA:          "#2e7d32",
     ecoB:          "#b98900",
     ecoC:          "#8a8a8a",

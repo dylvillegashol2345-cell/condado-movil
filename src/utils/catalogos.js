@@ -1,7 +1,3 @@
-/* Catálogos fijos del sistema.
-   Los IDs coinciden con las tablas Tipo y Localidad de ULTIMOSQL207.sql,
-   así que cuando conectemos la API los datos van a calzar sin traducción. */
-
 export const TIPOS = {
   1: "Casa",
   2: "Departamento",
@@ -33,6 +29,5 @@ export function localidadLabel(id) {
   return LOCALIDADES[Number(id)] || "Desconocida";
 }
 
-/* Imagen de respaldo cuando una propiedad no tiene foto cargada */
 export const IMG_PROPIEDAD_FALLBACK =
   "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=70";

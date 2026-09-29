@@ -6,19 +6,10 @@ import { ThemeProvider } from "styled-components/native";
 
 import { lightTheme } from "../theme/theme";
 
-/* QueryClient: el "cerebro" de TanStack Query. Mantiene el caché de las
-   consultas, maneja reintentos y sincroniza datos entre pantallas.
-   Se crea UNA sola vez, afuera del componente, y se comparte en toda la
-   app a través del QueryClientProvider. */
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      /* Cuánto tiempo un dato se considera "fresco": mientras no venza,
-         volver a una pantalla no vuelve a pedirlo. Un catálogo inmobiliario
-         no cambia cada segundo, así que un minuto es razonable. */
       staleTime: 60 * 1000,
-      /* Un reintento alcanza: si la API no está, el segundo intento falla
-         igual y solo demora en mostrar el error. */
       retry: 1,
     },
   },

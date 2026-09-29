@@ -4,13 +4,6 @@ import styled from "styled-components/native";
 
 import { useFavoritos } from "../store/favoritos";
 
-/* Header de marca de la pantalla principal.
-
-   Recibe por props cuántas propiedades se están mostrando. El contador
-   de favoritos, en cambio, lo lee del store: es la demostración de
-   Zustand contra el prop drilling. La pantalla no sabe cuántos favoritos
-   hay ni se lo pasa al header; el header se suscribe solo. */
-
 export default function Encabezado({ cantidad }) {
   const totalFavoritos = useFavoritos((estado) => estado.ids.length);
 

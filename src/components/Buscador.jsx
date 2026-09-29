@@ -1,12 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
-/* Campo de búsqueda del catálogo.
-
-   Es un componente controlado: no guarda el texto por su cuenta, lo
-   recibe por props y avisa hacia arriba cada vez que cambia. El estado
-   vive en la pantalla, que es la que necesita filtrar la lista. */
-
 export default function Buscador({ valor, onCambiar }) {
   return (
     <Caja>

@@ -3,12 +3,6 @@ import styled from "styled-components/native";
 
 import { MAXIMO, useComparar } from "../store/comparar";
 
-/* Toggle para sumar una propiedad a la comparación.
-
-   Igual que BotonFavorito, lee y escribe el store por su cuenta. Tiene
-   tres estados visuales: disponible, seleccionada, y deshabilitada
-   cuando ya hay 3 elegidas y esta no es una de ellas. */
-
 export default function BotonComparar({ id }) {
   const seleccionada = useComparar((estado) => estado.ids.includes(id));
   const cantidad = useComparar((estado) => estado.ids.length);

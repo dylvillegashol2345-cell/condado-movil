@@ -32,7 +32,9 @@ bonificación del 15%.
 ## Features
 
 Con 5 integrantes el alcance mínimo son 6 features. Se planificaron 7 para
-tener margen. **Las 7 están terminadas.**
+tener margen.
+
+### ✅ Features implementadas
 
 | # | Feature | Estado |
 |---|---|---|
@@ -43,6 +45,15 @@ tener margen. **Las 7 están terminadas.**
 | 5 | Gestionar propiedades favoritas | 🟢 Terminada — Zustand + persistencia en el dispositivo |
 | 6 | Solicitar una visita a una propiedad | 🟢 Terminada — formulario con `useMutation`, llega a la base como Consulta |
 | 7 | Comparar propiedades (hasta 3, lado a lado) | 🟢 Terminada — resalta el mejor valor de cada fila, con precio por m² |
+
+### ⏳ Features pendientes
+
+Las 7 features del plan están terminadas. Queda pendiente:
+
+| Pendiente | Estado |
+|---|---|
+| Modo oscuro con un segundo tema en el `ThemeProvider` | ⚪ Pendiente |
+| Features de las próximas unidades, a medida que se vean los contenidos | ⚪ Pendiente |
 
 **Referencias:** ⚪ Pendiente · 🟡 En curso · 🟢 Terminada
 

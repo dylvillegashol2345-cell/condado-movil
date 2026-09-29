@@ -13,17 +13,6 @@ import { localidadLabel, tipoLabel } from "../utils/catalogos";
 import { normalizarImagen } from "../utils/imagenes";
 import { calcularClaseEnergetica } from "../utils/reglas";
 
-/* Pantalla de favoritos.
-
-   Combina las dos herramientas de la Clase 4:
-   - Zustand tiene la lista de ids que el usuario marcó.
-   - TanStack Query tiene las propiedades. Se usa la MISMA queryKey que el
-     catálogo, así que si ya se cargó, esta pantalla no pide nada: lee del
-     caché y filtra por los ids favoritos.
-
-   La card es la misma del catálogo. Marcar o desmarcar desde acá también
-   actualiza el catálogo, porque los dos leen el mismo store. */
-
 export default function Favoritos() {
   const router = useRouter();
   const ids = useFavoritos((estado) => estado.ids);
@@ -41,7 +30,6 @@ export default function Favoritos() {
 
   const volver = () => (router.canGoBack() ? router.back() : router.replace("/"));
 
-  /* Se respeta el orden en que se marcaron, no el del catálogo. */
   const favoritas = ids
     .map((id) => propiedades.find((p) => p.IdPropiedad === id))
     .filter(Boolean);

@@ -4,12 +4,6 @@ import styled from "styled-components/native";
 import { calcularBonificacion } from "../utils/reglas";
 import EtiquetaEco from "./EtiquetaEco";
 
-/* Ficha del desempeño ambiental de una propiedad.
-
-   Es el diferencial del producto: el dato que ningún aviso inmobiliario
-   muestra. Todo sale de las reglas RN1 y RN2 del sistema Grupo Condado,
-   calculadas acá y no leídas de la base. */
-
 function Atributo({ icono, texto, presente }) {
   return (
     <Item>

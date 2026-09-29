@@ -11,18 +11,6 @@ import { obtenerPropiedad } from "../../services/propiedades";
 import { localidadLabel } from "../../utils/catalogos";
 import { money } from "../../utils/format";
 
-/* Solicitud de visita a una propiedad.
-
-   Primera pantalla de la app que ESCRIBE en el sistema. useQuery es para
-   leer; para enviar datos TanStack Query tiene useMutation, que expone
-   los mismos estados (isPending, error) más la función para disparar el
-   envío. El formulario en sí es estado de la interfaz: useState.
-
-   La propiedad se lee del caché con la misma queryKey que el detalle,
-   así que llegar acá desde el detalle no pide nada a la API. */
-
-/* Validaciones simples, en una función pura: devuelve un objeto con un
-   mensaje por campo inválido, o vacío si está todo bien. */
 function validar({ nombre, telefono }) {
   const errores = {};
   if (nombre.trim().length < 2) {
@@ -51,8 +39,6 @@ export default function SolicitarVisita() {
     queryFn: () => obtenerPropiedad(id),
   });
 
-  /* mutationFn: la función que envía. onSuccess: qué hacer cuando la API
-     respondió bien. El error queda en envio.error sin try/catch. */
   const envio = useMutation({
     mutationFn: enviarConsulta,
     onSuccess: () => setEnviado(true),
@@ -81,7 +67,7 @@ export default function SolicitarVisita() {
       nombre: nombre.trim(),
       telefono: telefono.trim(),
       mensaje: cuerpo,
-      /* PropiedadInteres es NVARCHAR(200) en la base */
+      // en la base es NVARCHAR(200)
       propiedadInteres: `${direccion} (ID ${id})`.slice(0, 200),
     });
   };

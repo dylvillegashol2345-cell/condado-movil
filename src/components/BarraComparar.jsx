@@ -4,10 +4,6 @@ import styled from "styled-components/native";
 
 import { MAXIMO, useComparar } from "../store/comparar";
 
-/* Barra flotante al pie del catálogo. Aparece cuando hay al menos una
-   propiedad elegida para comparar, y habilita el paso a la comparación
-   recién con dos. Lee el store sola: la pantalla no le pasa nada. */
-
 export default function BarraComparar() {
   const cantidad = useComparar((estado) => estado.ids.length);
   const limpiar = useComparar((estado) => estado.limpiar);

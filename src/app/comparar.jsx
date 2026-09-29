@@ -14,23 +14,9 @@ import { money } from "../utils/format";
 import { normalizarImagen } from "../utils/imagenes";
 import { calcularBonificacion, calcularClaseEnergetica } from "../utils/reglas";
 
-/* Comparación de hasta 3 propiedades, lado a lado.
-
-   Todo es local: las propiedades salen del caché de TanStack Query y los
-   ids del store de comparación. No se pide nada a la API.
-
-   Cada fila resalta el mejor valor. "Mejor" depende de la fila: menor
-   precio, mayor superficie, mejor clase energética. Si todas empatan, no
-   se resalta nada — resaltar un empate confunde más de lo que ayuda.
-
-   Precio por m² no viene en los datos: se calcula acá. Es la métrica que
-   permite comparar una casa de 240 m² con un departamento de 62. */
-
 const clase = (p) => calcularClaseEnergetica(p.PanelesSolares, p.AislamientoTermico);
 const rangoClase = { A: 3, B: 2, C: 1 };
 
-/* Definición de las filas: qué mostrar, cómo se compara y qué gana.
-   Definido fuera del componente: no cambia nunca. */
 const FILAS = [
   {
     clave: "precio",
@@ -87,8 +73,6 @@ const FILAS = [
   { clave: "estado", etiqueta: "Estado", valor: (p) => p.Estado || "—" },
 ];
 
-/* Devuelve, para una fila, qué índices de columna tienen el mejor valor.
-   Vacío si la fila no se compara o si todas empatan. */
 function ganadoras(fila, propiedades) {
   if (!fila.numero) return [];
   const valores = propiedades.map(fila.numero);
@@ -155,7 +139,6 @@ export default function Comparar() {
         </Vacio>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-          {/* Cabecera: una columna por propiedad, con foto, dirección y quitar */}
           <Columnas>
             {elegidas.map((p) => (
               <Columna key={p.IdPropiedad}>
@@ -178,7 +161,6 @@ export default function Comparar() {
             ))}
           </Columnas>
 
-          {/* Filas de comparación */}
           {FILAS.map((fila) => {
             const mejores = ganadoras(fila, elegidas);
             return (

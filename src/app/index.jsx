@@ -26,23 +26,7 @@ import { normalizarImagen } from "../utils/imagenes";
 import { calcularClaseEnergetica } from "../utils/reglas";
 import { agruparPorLocalidad } from "../utils/secciones";
 
-/* Pantalla principal — catálogo de propiedades.
-
-   Los datos del servidor los maneja TanStack Query (useQuery). Lo que
-   vive en useState es estado de la interfaz: el texto del buscador, los
-   tres filtros y el modo de vista. Cada cambio vuelve a dibujar la lista
-   con el resultado de aplicar búsqueda + filtros sobre los datos
-   cacheados. No se vuelve a pedir nada a la API: filtrar es local.
-
-   Dos modos de vista sobre los mismos datos filtrados:
-   - Lista: FlatList, un arreglo plano.
-   - Por localidad: SectionList, los mismos ítems agrupados bajo un
-     encabezado por localidad. Mismo PropiedadCard en los dos: un solo
-     componente sirve en dos listas distintas. */
-
-/* Búsqueda sin tildes: nadie escribe "Cosquín" con acento al buscar.
-   Se reemplazan a mano en vez de usar normalize("NFD"), porque el soporte
-   Unicode de Hermes (el motor JS de React Native) no es el del navegador. */
+// Para buscar sin tildes
 const ACENTOS = { "á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u", "ñ": "n" };
 
 function normalizar(valor) {
@@ -62,8 +46,6 @@ function coincide(propiedad, texto) {
   return campos.some((campo) => normalizar(campo).includes(texto));
 }
 
-/* Definido fuera del componente: no cambia nunca, no hace falta que React
-   lo recree en cada render. */
 const OPCIONES_VISTA = [
   { id: "lista", label: "Lista" },
   { id: "localidad", label: "Por localidad" },
@@ -116,13 +98,9 @@ export default function Inicio() {
     setPrecio(TODOS);
   };
 
-  /* Las localidades se calculan con la lista completa, no con la filtrada:
-     si se armaran con lo ya filtrado, al elegir "Casas" desaparecerían
-     del selector las localidades que solo tienen departamentos. */
+  // Con la lista completa, así no desaparecen opciones al filtrar
   const localidades = opcionesLocalidad(propiedades);
 
-  /* Lo que comparten las dos vistas. Se define una vez y se le pasa a la
-     lista que corresponda. */
   const encabezado = (
     <>
       <Encabezado cantidad={filtradas.length} />
@@ -186,7 +164,6 @@ export default function Inicio() {
         <SectionList
           {...propsComunes}
           sections={agruparPorLocalidad(filtradas)}
-          /* Recibe la sección completa; se desestructura para sacar el title */
           renderSectionHeader={({ section: { title, data } }) => (
             <SeccionCabecera>
               <SeccionTitulo>{title}</SeccionTitulo>

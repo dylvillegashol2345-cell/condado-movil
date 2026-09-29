@@ -1,10 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
-/* Pantalla de error de conexión, con botón para reintentar.
-   Mostrar el mensaje sin dar una salida deja al usuario sin nada que hacer
-   más que cerrar la app. */
-
 export default function ErrorCarga({ mensaje, onReintentar }) {
   return (
     <Caja>

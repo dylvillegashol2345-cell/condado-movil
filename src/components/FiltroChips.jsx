@@ -1,16 +1,6 @@
 import { ScrollView } from "react-native";
 import styled from "styled-components/native";
 
-/* Fila de chips seleccionables — el patrón de tabs de la Clase 3.
-
-   Recibe las opciones y cuál está activa, y avisa hacia arriba cuando el
-   usuario toca otra. No guarda estado propio: es un componente controlado,
-   igual que el Buscador. Por eso sirve para tipo, localidad y precio con
-   el mismo código.
-
-   El ScrollView horizontal evita que las opciones se corten en pantallas
-   angostas: si no entran, se deslizan. */
-
 export default function FiltroChips({ titulo, opciones, activo, onCambiar }) {
   return (
     <Bloque>
@@ -21,8 +11,6 @@ export default function FiltroChips({ titulo, opciones, activo, onCambiar }) {
         contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
       >
         {opciones.map((opcion) => {
-          /* Comparo el id de cada opción con el activo: así sé a cuál
-             pintarle el estilo de seleccionada. */
           const seleccionado = opcion.id === activo;
           return (
             <Chip

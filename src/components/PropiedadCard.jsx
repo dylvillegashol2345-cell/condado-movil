@@ -7,15 +7,6 @@ import BotonComparar from "./BotonComparar";
 import BotonFavorito from "./BotonFavorito";
 import EtiquetaEco from "./EtiquetaEco";
 
-/* Componente reutilizable que representa una propiedad del catálogo.
-   Toda la información entra por props: la card no sabe de dónde vienen
-   los datos, así que en la Unidad 2 pasa a consumir la API sin tocarla.
-
-   Es el equivalente al MovieCard del ejemplo de la consigna.
-
-   El corazón de favoritos no recibe nada por props más que el id: lee y
-   modifica el store global por su cuenta. */
-
 export default function PropiedadCard({
   id,
   imagen,

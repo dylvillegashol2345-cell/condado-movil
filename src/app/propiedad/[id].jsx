@@ -15,16 +15,6 @@ import { money, superficie as fmtSuperficie } from "../../utils/format";
 import { normalizarImagen } from "../../utils/imagenes";
 import { calcularClaseEnergetica } from "../../utils/reglas";
 
-/* Detalle de una propiedad.
-
-   El nombre del archivo entre corchetes lo convierte en una ruta
-   dinámica de Expo Router: /propiedad/1, /propiedad/2, etc. El valor
-   llega por useLocalSearchParams.
-
-   Unidad 3: el pedido a la API lo maneja useQuery. La queryKey incluye
-   el id, así cada propiedad tiene su propia entrada en el caché: abrir
-   la 1, volver, y abrir la 1 de nuevo no vuelve a pedirla. */
-
 export default function DetallePropiedad() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -35,9 +25,6 @@ export default function DetallePropiedad() {
     error,
     refetch,
   } = useQuery({
-    /* ["propiedad", "1"] y ["propiedad", "2"] son entradas distintas del
-       caché. Si la key fuera solo ["propiedad"], todas compartirían el
-       mismo dato y mostrarían la última que se cargó. */
     queryKey: ["propiedad", id],
     queryFn: () => obtenerPropiedad(id),
   });

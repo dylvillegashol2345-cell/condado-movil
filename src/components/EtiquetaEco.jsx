@@ -9,7 +9,7 @@ function colorDeClase(theme, clase) {
 export default function EtiquetaEco({ clase }) {
   return (
     <Pill clase={clase}>
-      <Texto>Clase {clase}</Texto>
+      <Texto clase={clase}>Clase {clase}</Texto>
     </Pill>
   );
 }
@@ -21,7 +21,7 @@ const Pill = styled.View`
 `;
 
 const Texto = styled.Text`
-  color: #ffffff;
+  color: ${({ clase }) => (clase === "A" ? "#ffffff" : "#173b17")};
   font-size: 11px;
   font-weight: 700;
 `;

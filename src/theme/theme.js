@@ -15,9 +15,9 @@ export const lightTheme = {
     textSecondary: "#6b5b52",
     textMuted:     "#a0918a",
 
-    ecoA:          "#2e7d32",
-    ecoB:          "#b98900",
-    ecoC:          "#8a8a8a",
+    ecoA:          "#007a33",
+    ecoB:          "#33cc33",
+    ecoC:          "#d9ff66",
   },
   radius: {
     sm: 10,

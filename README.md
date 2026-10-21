@@ -183,6 +183,16 @@ salen del sistema Grupo Condado, no de un archivo.
 3. Abrir el puerto 56153 en el firewall de Windows.
 4. Visual Studio debe correr **como administrador**: registrar una URL que no
    sea `localhost` requiere privilegios elevados.
+5. **Fotos de las propiedades.** La base guarda rutas del sistema web, como
+   `/img/propiedades/casa-01.jpg`, y esos archivos están en la carpeta `public`
+   del front React. Para que la app los vea, el sitio `WebApi` tiene que servir
+   esa carpeta. En `applicationhost.config`, debajo del `virtualDirectory` raíz:
+
+   ```xml
+   <virtualDirectory path="/img" physicalPath="...\Grupo-condado-react\public\img" />
+   ```
+
+   Sin esta línea las fotos aparecen en blanco.
 
 ### Cargar propiedades de prueba
 

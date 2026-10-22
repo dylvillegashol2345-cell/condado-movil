@@ -3,7 +3,7 @@ import { Link } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, SectionList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
 import BarraComparar from "../../components/BarraComparar";
 import Buscador from "../../components/Buscador";
@@ -54,6 +54,7 @@ const OPCIONES_VISTA = [
 ];
 
 export default function Inicio() {
+  const theme = useTheme();
   const [busqueda, setBusqueda] = useState("");
   const [tipo, setTipo] = useState(TODOS);
   const [localidad, setLocalidad] = useState(TODOS);
@@ -75,7 +76,7 @@ export default function Inicio() {
     return (
       <Pantalla edges={["top"]}>
         <Centrado>
-          <ActivityIndicator size="large" color="#6c2d20" />
+          <ActivityIndicator size="large" color={theme.colors.condado} />
           <Cargando>Cargando propiedades…</Cargando>
         </Centrado>
       </Pantalla>
@@ -173,7 +174,7 @@ export default function Inicio() {
     ListEmptyComponent: vacio,
     ListFooterComponent: hayMas ? (
       <MasAbajo>
-        <ActivityIndicator color="#6c2d20" />
+        <ActivityIndicator color={theme.colors.condado} />
         <MasTexto>
           Mostrando {pagina.length} de {filtradas.length}
         </MasTexto>

@@ -3,9 +3,12 @@ import { Link } from "expo-router";
 import styled from "styled-components/native";
 
 import { useFavoritos } from "../store/favoritos";
+import { useTema } from "../store/tema";
 
 export default function Encabezado({ cantidad }) {
   const totalFavoritos = useFavoritos((estado) => estado.ids.length);
+  const oscuro = useTema((estado) => estado.oscuro);
+  const alternarTema = useTema((estado) => estado.alternar);
 
   return (
     <Fondo>
@@ -15,16 +18,26 @@ export default function Encabezado({ cantidad }) {
           <Bajada>Propiedades sustentables en Córdoba</Bajada>
         </Textos>
 
-        <Link href="/favoritos" asChild>
-          <Corazon activeOpacity={0.75} accessibilityRole="button" accessibilityLabel="Ver favoritos">
-            <Ionicons name={totalFavoritos > 0 ? "heart" : "heart-outline"} size={22} color="#ffffff" />
-            {totalFavoritos > 0 ? (
-              <Globo>
-                <GloboTexto>{totalFavoritos}</GloboTexto>
-              </Globo>
-            ) : null}
-          </Corazon>
-        </Link>
+        <Botones>
+          <Circulo
+            onPress={alternarTema}
+            activeOpacity={0.75}
+            accessibilityLabel={oscuro ? "Usar modo claro" : "Usar modo oscuro"}
+          >
+            <Ionicons name={oscuro ? "sunny-outline" : "moon-outline"} size={20} color="#ffffff" />
+          </Circulo>
+
+          <Link href="/favoritos" asChild>
+            <Corazon activeOpacity={0.75} accessibilityRole="button" accessibilityLabel="Ver favoritos">
+              <Ionicons name={totalFavoritos > 0 ? "heart" : "heart-outline"} size={22} color="#ffffff" />
+              {totalFavoritos > 0 ? (
+                <Globo>
+                  <GloboTexto>{totalFavoritos}</GloboTexto>
+                </Globo>
+              ) : null}
+            </Corazon>
+          </Link>
+        </Botones>
       </Fila>
 
       <Contador>
@@ -61,15 +74,30 @@ const Marca = styled.Text`
 
 const Bajada = styled.Text`
   font-size: 14px;
-  color: ${({ theme }) => theme.colors.condadoLight};
+  color: #f5e9e6;
   margin-top: 4px;
 `;
 
 const Contador = styled.Text`
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.condado3};
+  color: rgba(255, 255, 255, 0.75);
   margin-top: 12px;
   font-weight: 600;
+`;
+
+const Botones = styled.View`
+  flex-direction: row;
+  gap: 8px;
+`;
+
+const Circulo = styled.TouchableOpacity`
+  width: 42px;
+  height: 42px;
+  border-radius: 21px;
+  background-color: rgba(255, 255, 255, 0.14);
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
 `;
 
 const Corazon = styled.TouchableOpacity`

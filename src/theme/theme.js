@@ -26,4 +26,25 @@ export const lightTheme = {
   },
 };
 
+export const darkTheme = {
+  ...lightTheme,
+  colors: {
+    ...lightTheme.colors,
+    condado:       "#b0533f",
+    condadoDark:   "#6c2d20",
+    condado2:      "#c4705f",
+    condado3:      "#d98c7a",
+    condadoLight:  "#3a2621",
+
+    bg:            "#15100d",
+    surface:       "#211915",
+    surface2:      "#2a201b",
+    border:        "#3d302a",
+
+    textPrimary:   "#f2ebe6",
+    textSecondary: "#cdbdb3",
+    textMuted:     "#958479",
+  },
+};
+
 export default lightTheme;

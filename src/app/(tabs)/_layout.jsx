@@ -1,10 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import { useTheme } from "styled-components/native";
 
 import { useComparar } from "../../store/comparar";
 import { useFavoritos } from "../../store/favoritos";
 
 export default function LayoutTabs() {
+  const theme = useTheme();
   const favoritos = useFavoritos((estado) => estado.ids.length);
   const comparando = useComparar((estado) => estado.ids.length);
 
@@ -12,9 +14,9 @@ export default function LayoutTabs() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#6c2d20",
-        tabBarInactiveTintColor: "#a0918a",
-        tabBarStyle: { backgroundColor: "#ffffff", borderTopColor: "#e8e0db" },
+        tabBarActiveTintColor: theme.colors.condado,
+        tabBarInactiveTintColor: theme.colors.textMuted,
+        tabBarStyle: { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border },
       }}
     >
       <Tabs.Screen

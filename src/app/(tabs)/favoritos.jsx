@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "expo-router";
 import { ActivityIndicator, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
 import ErrorCarga from "../../components/ErrorCarga";
 import PropiedadCard from "../../components/PropiedadCard";
@@ -14,6 +14,7 @@ import { normalizarImagen } from "../../utils/imagenes";
 import { calcularClaseEnergetica } from "../../utils/reglas";
 
 export default function Favoritos() {
+  const theme = useTheme();
   const ids = useFavoritos((estado) => estado.ids);
   const limpiar = useFavoritos((estado) => estado.limpiar);
 
@@ -46,7 +47,7 @@ export default function Favoritos() {
 
       {isLoading ? (
         <Centrado>
-          <ActivityIndicator size="large" color="#6c2d20" />
+          <ActivityIndicator size="large" color={theme.colors.condado} />
         </Centrado>
       ) : error ? (
         <ErrorCarga mensaje={error.message} onReintentar={refetch} />

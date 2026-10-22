@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "expo-router";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
 import ErrorCarga from "../../components/ErrorCarga";
 import EtiquetaEco from "../../components/EtiquetaEco";
@@ -83,6 +83,7 @@ function ganadoras(fila, propiedades) {
 }
 
 export default function Comparar() {
+  const theme = useTheme();
   const ids = useComparar((estado) => estado.ids);
   const quitar = useComparar((estado) => estado.quitar);
 
@@ -97,7 +98,7 @@ export default function Comparar() {
     return (
       <Pantalla edges={["top"]}>
         <Centrado>
-          <ActivityIndicator size="large" color="#6c2d20" />
+          <ActivityIndicator size="large" color={theme.colors.condado} />
         </Centrado>
       </Pantalla>
     );
@@ -283,8 +284,8 @@ const Celda = styled.View`
   padding: 8px 6px;
   border-radius: ${({ theme }) => theme.radius.sm}px;
   border-width: 1px;
-  border-color: ${({ gana }) => (gana ? "#2e7d32" : "#e8e0db")};
-  background-color: ${({ gana }) => (gana ? "#eaf3ea" : "#ffffff")};
+  border-color: ${({ gana, theme }) => (gana ? "#2e7d32" : theme.colors.border)};
+  background-color: ${({ gana, theme }) => (gana ? "#eaf3ea" : theme.colors.surface)};
 `;
 
 const CeldaTexto = styled.Text`

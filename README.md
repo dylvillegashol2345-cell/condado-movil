@@ -46,13 +46,14 @@ tener margen.
 | 6 | Solicitar una visita a una propiedad | 🟢 Terminada — formulario con `useMutation`, llega a la base como Consulta |
 | 7 | Comparar propiedades (hasta 3, lado a lado) | 🟢 Terminada — resalta el mejor valor de cada fila, con precio por m² |
 
+Extras: navegación con **tabs**, **paginación** del catálogo y **modo oscuro** (🟢 terminados).
+
 ### ⏳ Features pendientes
 
-Las 7 features del plan están terminadas. Queda pendiente:
+Las 7 features del plan y los extras están terminados. Queda pendiente:
 
 | Pendiente | Estado |
 |---|---|
-| Modo oscuro con un segundo tema en el `ThemeProvider` | ⚪ Pendiente |
 | Features de las próximas unidades, a medida que se vean los contenidos | ⚪ Pendiente |
 
 **Referencias:** ⚪ Pendiente · 🟡 En curso · 🟢 Terminada
@@ -148,6 +149,10 @@ sistema Grupo Condado copiada sin cambios desde el proyecto web.
   "Mostrando X de Y". Al cambiar la búsqueda, un filtro o la vista, vuelve a
   empezar. La API devuelve todas las propiedades juntas, así que la paginación
   se hace en la app.
+- **Modo oscuro.** `theme.js` define un segundo tema, `darkTheme`, con los mismos
+  nombres de colores. Un botón luna/sol en el encabezado lo alterna, y la elección
+  se guarda con un store de Zustand con `persist` (`store/tema.js`), igual que los
+  favoritos. El `ThemeProvider` de la raíz elige el tema según ese store.
 - Las localidades y las características (dormitorios, baños, cochera…) se
   muestran igual que en el sistema web.
 
@@ -255,9 +260,10 @@ src/
 │   └── consultas.js         POST api/Consulta (solicitud de visita)
 ├── store/
 │   ├── favoritos.js         Store de Zustand con persistencia
+│   ├── tema.js              Modo claro u oscuro (persistido)
 │   └── comparar.js          Store de Zustand para la comparación (sin persistir)
 ├── theme/
-│   └── theme.js             Paleta terracota de Grupo Condado
+│   └── theme.js             Paleta terracota: tema claro y oscuro
 └── utils/
     ├── reglas.js            Reglas de negocio RN1–RN5 del sistema
     ├── catalogos.js         Tipos de propiedad y localidades

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
 import BotonFavorito from "../../components/BotonFavorito";
 import ErrorCarga from "../../components/ErrorCarga";
@@ -17,6 +17,7 @@ import { calcularClaseEnergetica } from "../../utils/reglas";
 import { leerCaracteristicas } from "../../utils/caracteristicas";
 
 export default function DetallePropiedad() {
+  const theme = useTheme();
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
@@ -36,7 +37,7 @@ export default function DetallePropiedad() {
     return (
       <Pantalla edges={["top"]}>
         <Centrado>
-          <ActivityIndicator size="large" color="#6c2d20" />
+          <ActivityIndicator size="large" color={theme.colors.condado} />
         </Centrado>
       </Pantalla>
     );
@@ -46,7 +47,7 @@ export default function DetallePropiedad() {
     return (
       <Pantalla edges={["top"]}>
         <Volver onPress={volver} activeOpacity={0.7}>
-          <Ionicons name="arrow-back" size={22} color="#1a1209" />
+          <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
         </Volver>
         <ErrorCarga mensaje={error.message} onReintentar={refetch} />
       </Pantalla>

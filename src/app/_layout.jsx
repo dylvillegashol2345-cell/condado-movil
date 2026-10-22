@@ -4,7 +4,8 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "styled-components/native";
 
-import { lightTheme } from "../theme/theme";
+import { useTema } from "../store/tema";
+import { darkTheme, lightTheme } from "../theme/theme";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,10 +17,12 @@ const queryClient = new QueryClient({
 });
 
 export default function Layout() {
+  const oscuro = useTema((estado) => estado.oscuro);
+
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={lightTheme}>
+        <ThemeProvider theme={oscuro ? darkTheme : lightTheme}>
           <StatusBar style="light" />
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" />

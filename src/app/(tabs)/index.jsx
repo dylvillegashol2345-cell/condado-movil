@@ -5,15 +5,15 @@ import { ActivityIndicator, FlatList, SectionList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
-import BarraComparar from "../components/BarraComparar";
-import Buscador from "../components/Buscador";
-import Encabezado from "../components/Encabezado";
-import ErrorCarga from "../components/ErrorCarga";
-import FiltroChips from "../components/FiltroChips";
-import PropiedadCard from "../components/PropiedadCard";
-import SinResultados from "../components/SinResultados";
-import { obtenerPropiedades } from "../services/propiedades";
-import { localidadLabel, tipoLabel } from "../utils/catalogos";
+import BarraComparar from "../../components/BarraComparar";
+import Buscador from "../../components/Buscador";
+import Encabezado from "../../components/Encabezado";
+import ErrorCarga from "../../components/ErrorCarga";
+import FiltroChips from "../../components/FiltroChips";
+import PropiedadCard from "../../components/PropiedadCard";
+import SinResultados from "../../components/SinResultados";
+import { obtenerPropiedades } from "../../services/propiedades";
+import { localidadLabel, tipoLabel } from "../../utils/catalogos";
 import {
   OPCIONES_PRECIO,
   OPCIONES_TIPO,
@@ -21,10 +21,10 @@ import {
   aplicarFiltros,
   hayFiltrosActivos,
   opcionesLocalidad,
-} from "../utils/filtros";
-import { normalizarImagen } from "../utils/imagenes";
-import { calcularClaseEnergetica } from "../utils/reglas";
-import { agruparPorLocalidad } from "../utils/secciones";
+} from "../../utils/filtros";
+import { normalizarImagen } from "../../utils/imagenes";
+import { calcularClaseEnergetica } from "../../utils/reglas";
+import { agruparPorLocalidad } from "../../utils/secciones";
 
 // Para buscar sin tildes
 const ACENTOS = { "á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u", "ñ": "n" };
@@ -46,6 +46,8 @@ function coincide(propiedad, texto) {
   return campos.some((campo) => normalizar(campo).includes(texto));
 }
 
+const POR_PAGINA = 10;
+
 const OPCIONES_VISTA = [
   { id: "lista", label: "Lista" },
   { id: "localidad", label: "Por localidad" },
@@ -57,6 +59,7 @@ export default function Inicio() {
   const [localidad, setLocalidad] = useState(TODOS);
   const [precio, setPrecio] = useState(TODOS);
   const [vista, setVista] = useState("lista");
+  const [visibles, setVisibles] = useState(POR_PAGINA);
 
   const {
     data: propiedades = [],
@@ -91,11 +94,24 @@ export default function Inicio() {
   const texto = normalizar(busqueda.trim());
   const filtradas = aplicarFiltros(propiedades, filtros).filter((p) => coincide(p, texto));
 
+  // Al cambiar la búsqueda o un filtro, la paginación vuelve a empezar
+  const conReinicio = (cambiar) => (valor) => {
+    cambiar(valor);
+    setVisibles(POR_PAGINA);
+  };
+
   const limpiarTodo = () => {
     setBusqueda("");
     setTipo(TODOS);
     setLocalidad(TODOS);
     setPrecio(TODOS);
+    setVisibles(POR_PAGINA);
+  };
+
+  const pagina = filtradas.slice(0, visibles);
+  const hayMas = visibles < filtradas.length;
+  const cargarMas = () => {
+    if (hayMas) setVisibles((v) => v + POR_PAGINA);
   };
 
   // Con la lista completa, así no desaparecen opciones al filtrar
@@ -104,13 +120,13 @@ export default function Inicio() {
   const encabezado = (
     <>
       <Encabezado cantidad={filtradas.length} />
-      <Buscador valor={busqueda} onCambiar={setBusqueda} />
-      <FiltroChips titulo="Tipo" opciones={OPCIONES_TIPO} activo={tipo} onCambiar={setTipo} />
+      <Buscador valor={busqueda} onCambiar={conReinicio(setBusqueda)} />
+      <FiltroChips titulo="Tipo" opciones={OPCIONES_TIPO} activo={tipo} onCambiar={conReinicio(setTipo)} />
       {localidades.length > 2 ? (
-        <FiltroChips titulo="Localidad" opciones={localidades} activo={localidad} onCambiar={setLocalidad} />
+        <FiltroChips titulo="Localidad" opciones={localidades} activo={localidad} onCambiar={conReinicio(setLocalidad)} />
       ) : null}
-      <FiltroChips titulo="Precio" opciones={OPCIONES_PRECIO} activo={precio} onCambiar={setPrecio} />
-      <FiltroChips titulo="Vista" opciones={OPCIONES_VISTA} activo={vista} onCambiar={setVista} />
+      <FiltroChips titulo="Precio" opciones={OPCIONES_PRECIO} activo={precio} onCambiar={conReinicio(setPrecio)} />
+      <FiltroChips titulo="Vista" opciones={OPCIONES_VISTA} activo={vista} onCambiar={conReinicio(setVista)} />
       <Separador />
     </>
   );
@@ -155,6 +171,16 @@ export default function Inicio() {
     keyboardShouldPersistTaps: "handled",
     ListHeaderComponent: encabezado,
     ListEmptyComponent: vacio,
+    ListFooterComponent: hayMas ? (
+      <MasAbajo>
+        <ActivityIndicator color="#6c2d20" />
+        <MasTexto>
+          Mostrando {pagina.length} de {filtradas.length}
+        </MasTexto>
+      </MasAbajo>
+    ) : null,
+    onEndReached: cargarMas,
+    onEndReachedThreshold: 0.5,
     renderItem,
   };
 
@@ -163,7 +189,7 @@ export default function Inicio() {
       <Pantalla edges={["top"]}>
         <SectionList
           {...propsComunes}
-          sections={agruparPorLocalidad(filtradas)}
+          sections={agruparPorLocalidad(pagina)}
           renderSectionHeader={({ section: { title, data } }) => (
             <SeccionCabecera>
               <SeccionTitulo>{title}</SeccionTitulo>
@@ -180,7 +206,7 @@ export default function Inicio() {
 
   return (
     <Pantalla edges={["top"]}>
-      <FlatList {...propsComunes} data={filtradas} />
+      <FlatList {...propsComunes} data={pagina} />
       <BarraComparar />
     </Pantalla>
   );
@@ -236,4 +262,15 @@ const SeccionCantidad = styled.Text`
 
 const SeccionPie = styled.View`
   height: 8px;
+`;
+
+const MasAbajo = styled.View`
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0 16px;
+`;
+
+const MasTexto = styled.Text`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.textMuted};
 `;

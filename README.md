@@ -137,6 +137,20 @@ sistema Grupo Condado copiada sin cambios desde el proyecto web.
   **precio por m²**, que es lo que permite comparar una casa de 240 m² con un
   departamento de 62. Todo es local: no pide nada a la API.
 
+### Correcciones del corte evaluativo
+
+- **Tabs.** Catálogo, Favoritos y Comparar pasan a ser pestañas con `Tabs` de
+  Expo Router, dentro del grupo `app/(tabs)/`. El detalle y la solicitud de
+  visita siguen en el `Stack` de la raíz, así se abren encima de las pestañas.
+  Las pestañas de Favoritos y Comparar muestran la cantidad leyendo el store.
+- **Paginación.** El catálogo muestra 10 propiedades y suma 10 más cada vez que
+  se llega al final de la lista (`onEndReached`), con un pie que indica
+  "Mostrando X de Y". Al cambiar la búsqueda, un filtro o la vista, vuelve a
+  empezar. La API devuelve todas las propiedades juntas, así que la paginación
+  se hace en la app.
+- Las localidades y las características (dormitorios, baños, cochera…) se
+  muestran igual que en el sistema web.
+
 ## Stack
 
 - Expo SDK 57 + Expo Router
@@ -214,9 +228,11 @@ proyecto sin editar nada y sigue funcionando cuando el router reparte otra IP.
 src/
 ├── app/                     Pantallas (Expo Router)
 │   ├── _layout.jsx          Layout raíz: ThemeProvider + Stack
-│   ├── index.jsx            Pantalla principal — catálogo, búsqueda y filtros
-│   ├── favoritos.jsx        Propiedades marcadas como favoritas
-│   ├── comparar.jsx         Comparación lado a lado de hasta 3 propiedades
+│   ├── (tabs)/
+│   │   ├── _layout.jsx      Pestañas: Catálogo, Favoritos y Comparar
+│   │   ├── index.jsx        Catálogo: búsqueda, filtros y paginación
+│   │   ├── favoritos.jsx    Propiedades marcadas como favoritas
+│   │   └── comparar.jsx     Comparación lado a lado de hasta 3 propiedades
 │   ├── propiedad/
 │   │   └── [id].jsx         Detalle de una propiedad (ruta dinámica)
 │   └── visita/
@@ -248,6 +264,7 @@ src/
     ├── format.js            Formato de precios y superficies
     ├── filtros.js           Opciones y lógica de los filtros del catálogo
     ├── secciones.js         Agrupa propiedades por localidad para SectionList
+    ├── caracteristicas.js   Lee dormitorios, baños, etc. de la descripción
     └── imagenes.js          Normalización de las rutas de imagen
 
 scripts/

@@ -1,20 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { ActivityIndicator, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
-import ErrorCarga from "../components/ErrorCarga";
-import PropiedadCard from "../components/PropiedadCard";
-import { obtenerPropiedades } from "../services/propiedades";
-import { useFavoritos } from "../store/favoritos";
-import { localidadLabel, tipoLabel } from "../utils/catalogos";
-import { normalizarImagen } from "../utils/imagenes";
-import { calcularClaseEnergetica } from "../utils/reglas";
+import ErrorCarga from "../../components/ErrorCarga";
+import PropiedadCard from "../../components/PropiedadCard";
+import { obtenerPropiedades } from "../../services/propiedades";
+import { useFavoritos } from "../../store/favoritos";
+import { localidadLabel, tipoLabel } from "../../utils/catalogos";
+import { normalizarImagen } from "../../utils/imagenes";
+import { calcularClaseEnergetica } from "../../utils/reglas";
 
 export default function Favoritos() {
-  const router = useRouter();
   const ids = useFavoritos((estado) => estado.ids);
   const limpiar = useFavoritos((estado) => estado.limpiar);
 
@@ -28,8 +27,6 @@ export default function Favoritos() {
     queryFn: obtenerPropiedades,
   });
 
-  const volver = () => (router.canGoBack() ? router.back() : router.replace("/"));
-
   const favoritas = ids
     .map((id) => propiedades.find((p) => p.IdPropiedad === id))
     .filter(Boolean);
@@ -37,9 +34,6 @@ export default function Favoritos() {
   return (
     <Pantalla edges={["top"]}>
       <Barra>
-        <Volver onPress={volver} activeOpacity={0.7} accessibilityLabel="Volver">
-          <Ionicons name="arrow-back" size={22} color="#1a1209" />
-        </Volver>
         <Titulo>Favoritos</Titulo>
         {favoritas.length > 0 ? (
           <Limpiar onPress={limpiar} activeOpacity={0.7}>
@@ -115,11 +109,7 @@ const Barra = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 8px 10px 4px;
-`;
-
-const Volver = styled.TouchableOpacity`
-  padding: 10px 12px;
+  padding: 14px 16px 10px;
 `;
 
 const Titulo = styled.Text`

@@ -1,18 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
-import ErrorCarga from "../components/ErrorCarga";
-import EtiquetaEco from "../components/EtiquetaEco";
-import { obtenerPropiedades } from "../services/propiedades";
-import { useComparar } from "../store/comparar";
-import { IMG_PROPIEDAD_FALLBACK, localidadLabel, tipoLabel } from "../utils/catalogos";
-import { money } from "../utils/format";
-import { normalizarImagen } from "../utils/imagenes";
-import { calcularBonificacion, calcularClaseEnergetica } from "../utils/reglas";
+import ErrorCarga from "../../components/ErrorCarga";
+import EtiquetaEco from "../../components/EtiquetaEco";
+import { obtenerPropiedades } from "../../services/propiedades";
+import { useComparar } from "../../store/comparar";
+import { IMG_PROPIEDAD_FALLBACK, localidadLabel, tipoLabel } from "../../utils/catalogos";
+import { money } from "../../utils/format";
+import { normalizarImagen } from "../../utils/imagenes";
+import { calcularBonificacion, calcularClaseEnergetica } from "../../utils/reglas";
 
 const clase = (p) => calcularClaseEnergetica(p.PanelesSolares, p.AislamientoTermico);
 const rangoClase = { A: 3, B: 2, C: 1 };
@@ -83,7 +83,6 @@ function ganadoras(fila, propiedades) {
 }
 
 export default function Comparar() {
-  const router = useRouter();
   const ids = useComparar((estado) => estado.ids);
   const quitar = useComparar((estado) => estado.quitar);
 
@@ -91,8 +90,6 @@ export default function Comparar() {
     queryKey: ["propiedades"],
     queryFn: obtenerPropiedades,
   });
-
-  const volver = () => (router.canGoBack() ? router.back() : router.replace("/"));
 
   const elegidas = ids.map((id) => propiedades.find((p) => p.IdPropiedad === id)).filter(Boolean);
 
@@ -117,9 +114,6 @@ export default function Comparar() {
   return (
     <Pantalla edges={["top"]}>
       <Barra>
-        <Volver onPress={volver} activeOpacity={0.7} accessibilityLabel="Volver">
-          <Ionicons name="arrow-back" size={22} color="#1a1209" />
-        </Volver>
         <Titulo>Comparar</Titulo>
         <Espacio />
       </Barra>
@@ -203,11 +197,7 @@ const Barra = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 8px 6px 4px;
-`;
-
-const Volver = styled.TouchableOpacity`
-  padding: 10px 12px;
+  padding: 14px 16px 10px;
 `;
 
 const Titulo = styled.Text`

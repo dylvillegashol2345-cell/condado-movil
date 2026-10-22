@@ -22,11 +22,9 @@ export default function Layout() {
         <ThemeProvider theme={lightTheme}>
           <StatusBar style="light" />
           <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
+            <Stack.Screen name="(tabs)" />
             <Stack.Screen name="propiedad/[id]" />
-            <Stack.Screen name="favoritos" />
             <Stack.Screen name="visita/[id]" />
-            <Stack.Screen name="comparar" />
           </Stack>
         </ThemeProvider>
       </QueryClientProvider>

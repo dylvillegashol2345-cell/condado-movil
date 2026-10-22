@@ -32,7 +32,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "cargar-datos": "node scripts/cargar-propiedades.js"
+    "cargar-datos": "node scripts/cargar-propiedades.js",
+    "test": "node scripts/test-validacion.mjs"
   },
   "private": true
 }

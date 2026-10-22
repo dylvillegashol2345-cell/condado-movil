@@ -4,27 +4,22 @@ import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
 import { enviarConsulta } from "../../services/consultas";
 import { obtenerPropiedad } from "../../services/propiedades";
 import { localidadLabel } from "../../utils/catalogos";
 import { money } from "../../utils/format";
-
-function validar({ nombre, telefono }) {
-  const errores = {};
-  if (nombre.trim().length < 2) {
-    errores.nombre = "Ingresá tu nombre.";
-  }
-  const digitos = telefono.replace(/\D/g, "");
-  const soloNumeros = /^[\d\s()+-]+$/.test(telefono.trim());
-  if (!soloNumeros || digitos.length < 6 || digitos.length > 15) {
-    errores.telefono = "Ingresá un teléfono válido: solo números, entre 6 y 15 dígitos.";
-  }
-  return errores;
-}
+import {
+  validar,
+  normalizarTelefono,
+  mostrarTelefono,
+  telefonoParaApi,
+  formatearFechaHora,
+} from "../../utils/validacionVisita";
 
 export default function SolicitarVisita() {
+  const theme = useTheme();
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
@@ -48,7 +43,7 @@ export default function SolicitarVisita() {
   const volver = () => (router.canGoBack() ? router.back() : router.replace("/"));
 
   const enviar = () => {
-    const nuevosErrores = validar({ nombre, telefono });
+    const nuevosErrores = validar({ nombre, telefono, fechaPreferida });
     setErrores(nuevosErrores);
     if (Object.keys(nuevosErrores).length > 0) return;
 
@@ -65,8 +60,8 @@ export default function SolicitarVisita() {
       .join("\n");
 
     envio.mutate({
-      nombre: nombre.trim(),
-      telefono: telefono.trim(),
+      nombre: nombre.trim().replace(/\s+/g, " "),
+      telefono: telefonoParaApi(telefono),
       mensaje: cuerpo,
       // en la base es NVARCHAR(200)
       propiedadInteres: `${direccion} (ID ${id})`.slice(0, 200),
@@ -80,7 +75,7 @@ export default function SolicitarVisita() {
           <Ionicons name="checkmark-circle" size={64} color="#2e7d32" />
           <ExitoTitulo>Solicitud enviada</ExitoTitulo>
           <ExitoDetalle>
-            Un agente de Grupo Condado se va a comunicar con vos al {telefono.trim()} para
+            Un agente de Grupo Condado se va a comunicar con vos al {mostrarTelefono(telefono)} para
             coordinar la visita.
           </ExitoDetalle>
           <Link href="/" asChild>
@@ -102,7 +97,7 @@ export default function SolicitarVisita() {
         <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <Barra>
             <Volver onPress={volver} activeOpacity={0.7} accessibilityLabel="Volver">
-              <Ionicons name="arrow-back" size={22} color="#1a1209" />
+              <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
             </Volver>
             <Titulo>Solicitar visita</Titulo>
           </Barra>
@@ -123,10 +118,11 @@ export default function SolicitarVisita() {
               <Entrada
                 value={nombre}
                 onChangeText={setNombre}
-                placeholder="Como querés que te llamemos"
-                placeholderTextColor="#a0918a"
+                placeholder="Nombre y apellido"
+                placeholderTextColor={theme.colors.textMuted}
                 autoCapitalize="words"
                 autoCorrect={false}
+                maxLength={60}
                 conError={Boolean(errores.nombre)}
               />
               {errores.nombre ? <Error>{errores.nombre}</Error> : null}
@@ -135,13 +131,15 @@ export default function SolicitarVisita() {
             <Campo>
               <Etiqueta>Teléfono *</Etiqueta>
               <Entrada
-                value={telefono}
-                onChangeText={setTelefono}
-                placeholder="351 555 1234"
-                placeholderTextColor="#a0918a"
-                keyboardType="phone-pad"
+                value={mostrarTelefono(telefono)}
+                onChangeText={(t) => setTelefono(normalizarTelefono(t))}
+                placeholder="351 264 9784"
+                placeholderTextColor={theme.colors.textMuted}
+                keyboardType="number-pad"
+                maxLength={12}
                 conError={Boolean(errores.telefono)}
               />
+              <Ayuda>Código de área + número, sin el 0 ni el 15.</Ayuda>
               {errores.telefono ? <Error>{errores.telefono}</Error> : null}
             </Campo>
 
@@ -149,10 +147,15 @@ export default function SolicitarVisita() {
               <Etiqueta>Día y horario preferido</Etiqueta>
               <Entrada
                 value={fechaPreferida}
-                onChangeText={setFechaPreferida}
-                placeholder="Ej: sábado a la mañana"
-                placeholderTextColor="#a0918a"
+                onChangeText={(t) => setFechaPreferida(formatearFechaHora(t))}
+                placeholder="20/10/2026 15:30"
+                placeholderTextColor={theme.colors.textMuted}
+                keyboardType="number-pad"
+                maxLength={16}
+                conError={Boolean(errores.fechaPreferida)}
               />
+              <Ayuda>Opcional. Formato día/mes/año y hora de 0 a 23.</Ayuda>
+              {errores.fechaPreferida ? <Error>{errores.fechaPreferida}</Error> : null}
             </Campo>
 
             <Campo>
@@ -161,7 +164,7 @@ export default function SolicitarVisita() {
                 value={mensaje}
                 onChangeText={setMensaje}
                 placeholder="Algo que quieras aclarar (opcional)"
-                placeholderTextColor="#a0918a"
+                placeholderTextColor={theme.colors.textMuted}
                 multiline
                 numberOfLines={4}
                 maxLength={800}
@@ -172,7 +175,7 @@ export default function SolicitarVisita() {
 
             {envio.error ? (
               <ErrorEnvio>
-                <Ionicons name="alert-circle-outline" size={16} color="#b71c1c" />
+                <Ionicons name="alert-circle-outline" size={16} color={theme.colors.error} />
                 <ErrorEnvioTexto>{envio.error.message}</ErrorEnvioTexto>
               </ErrorEnvio>
             ) : null}
@@ -259,7 +262,7 @@ const Etiqueta = styled.Text`
 const Entrada = styled.TextInput`
   background-color: ${({ theme }) => theme.colors.surface};
   border-width: 1px;
-  border-color: ${({ theme, conError }) => (conError ? "#b71c1c" : theme.colors.border)};
+  border-color: ${({ theme, conError }) => (conError ? theme.colors.error : theme.colors.border)};
   border-radius: ${({ theme }) => theme.radius.sm}px;
   padding: 12px 14px;
   font-size: 15px;
@@ -267,16 +270,22 @@ const Entrada = styled.TextInput`
   min-height: ${({ alta }) => (alta ? "110px" : "auto")};
 `;
 
+const Ayuda = styled.Text`
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.textMuted};
+  margin-top: 5px;
+`;
+
 const Error = styled.Text`
   font-size: 12px;
-  color: #b71c1c;
+  color: ${({ theme }) => theme.colors.error};
   margin-top: 5px;
 `;
 
 const ErrorEnvio = styled.View`
   flex-direction: row;
   gap: 8px;
-  background-color: #fdecea;
+  background-color: ${({ theme }) => theme.colors.errorFondo};
   padding: 12px 14px;
   border-radius: ${({ theme }) => theme.radius.sm}px;
   margin-bottom: 14px;
@@ -285,7 +294,7 @@ const ErrorEnvio = styled.View`
 const ErrorEnvioTexto = styled.Text`
   flex: 1;
   font-size: 12.5px;
-  color: #b71c1c;
+  color: ${({ theme }) => theme.colors.error};
   line-height: 18px;
 `;
 

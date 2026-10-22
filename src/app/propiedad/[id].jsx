@@ -14,6 +14,7 @@ import { IMG_PROPIEDAD_FALLBACK, localidadLabel, tipoLabel } from "../../utils/c
 import { money, superficie as fmtSuperficie } from "../../utils/format";
 import { normalizarImagen } from "../../utils/imagenes";
 import { calcularClaseEnergetica } from "../../utils/reglas";
+import { leerCaracteristicas } from "../../utils/caracteristicas";
 
 export default function DetallePropiedad() {
   const { id } = useLocalSearchParams();
@@ -54,6 +55,7 @@ export default function DetallePropiedad() {
 
   const p = propiedad;
   const clase = calcularClaseEnergetica(p.PanelesSolares, p.AislamientoTermico);
+  const caracteristicas = leerCaracteristicas(p.Descripcion);
 
   return (
     <Pantalla edges={["top"]}>
@@ -97,7 +99,16 @@ export default function DetallePropiedad() {
             </Dato>
           </Datos>
 
-          {p.Descripcion ? (
+          {caracteristicas ? (
+            <>
+              <Subtitulo>Características</Subtitulo>
+              {caracteristicas.map((c) => (
+                <Parrafo key={c.nombre}>
+                  {c.nombre}: {c.valor}
+                </Parrafo>
+              ))}
+            </>
+          ) : p.Descripcion ? (
             <>
               <Subtitulo>Descripción</Subtitulo>
               <Parrafo>{p.Descripcion}</Parrafo>

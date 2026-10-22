@@ -18,6 +18,9 @@ export const lightTheme = {
     ecoA:          "#1b5e20",
     ecoB:          "#388e3c",
     ecoC:          "#a5d6a7",
+
+    error:         "#b71c1c",
+    errorFondo:    "#fdecea",
   },
   radius: {
     sm: 10,
@@ -44,6 +47,9 @@ export const darkTheme = {
     textPrimary:   "#f2ebe6",
     textSecondary: "#cdbdb3",
     textMuted:     "#958479",
+
+    error:         "#ef9a9a",
+    errorFondo:    "#3b1d1d",
   },
 };
 

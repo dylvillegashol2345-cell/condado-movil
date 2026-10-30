@@ -9,7 +9,7 @@ import styled, { useTheme } from "styled-components/native";
 import { enviarConsulta } from "../../services/consultas";
 import { obtenerPropiedad } from "../../services/propiedades";
 import { localidadLabel } from "../../utils/catalogos";
-import { money } from "../../utils/format";
+import { direccion, money } from "../../utils/format";
 import {
   validar,
   normalizarTelefono,
@@ -47,8 +47,8 @@ export default function SolicitarVisita() {
     setErrores(nuevosErrores);
     if (Object.keys(nuevosErrores).length > 0) return;
 
-    const direccion = propiedad
-      ? `${propiedad.Barrio} · ${propiedad.Calle} ${propiedad.Numeracion}, ${localidadLabel(propiedad.IdLocalidad)}`
+    const ubicacion = propiedad
+      ? `${direccion(propiedad.Barrio, propiedad.Calle, propiedad.Numeracion)}, ${localidadLabel(propiedad.IdLocalidad)}`
       : `Propiedad #${id}`;
 
     const cuerpo = [
@@ -64,9 +64,28 @@ export default function SolicitarVisita() {
       telefono: telefonoParaApi(telefono),
       mensaje: cuerpo,
       // en la base es NVARCHAR(200)
-      propiedadInteres: `${direccion} (ID ${id})`.slice(0, 200),
+      propiedadInteres: `${ubicacion} (ID ${id})`.slice(0, 200),
     });
   };
+
+  if (propiedad && propiedad.Estado !== "Disponible") {
+    return (
+      <Pantalla edges={["top"]}>
+        <Exito>
+          <Ionicons name="lock-closed-outline" size={56} color={theme.colors.textMuted} />
+          <ExitoTitulo>Propiedad no disponible</ExitoTitulo>
+          <ExitoDetalle>
+            Esta propiedad está {String(propiedad.Estado).toLowerCase()}, así que no se pueden pedir visitas.
+          </ExitoDetalle>
+          <Link href="/" asChild>
+            <Boton activeOpacity={0.85}>
+              <BotonTexto>Ver otras propiedades</BotonTexto>
+            </Boton>
+          </Link>
+        </Exito>
+      </Pantalla>
+    );
+  }
 
   if (enviado) {
     return (
@@ -104,9 +123,9 @@ export default function SolicitarVisita() {
 
           {propiedad ? (
             <Resumen>
-              <ResumenPrecio>{money(propiedad.Precio)}</ResumenPrecio>
+              <ResumenPrecio>{money(propiedad.Precio, propiedad.Moneda)}</ResumenPrecio>
               <ResumenDireccion>
-                {propiedad.Barrio} · {propiedad.Calle} {propiedad.Numeracion}
+                {direccion(propiedad.Barrio, propiedad.Calle, propiedad.Numeracion)}
               </ResumenDireccion>
               <ResumenLocalidad>{localidadLabel(propiedad.IdLocalidad)}</ResumenLocalidad>
             </Resumen>

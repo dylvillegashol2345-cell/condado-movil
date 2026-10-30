@@ -10,7 +10,7 @@ import EtiquetaEco from "../../components/EtiquetaEco";
 import { obtenerPropiedades } from "../../services/propiedades";
 import { useComparar } from "../../store/comparar";
 import { IMG_PROPIEDAD_FALLBACK, localidadLabel, tipoLabel } from "../../utils/catalogos";
-import { money } from "../../utils/format";
+import { direccion, money } from "../../utils/format";
 import { normalizarImagen } from "../../utils/imagenes";
 import { calcularBonificacion, calcularClaseEnergetica } from "../../utils/reglas";
 
@@ -21,9 +21,10 @@ const FILAS = [
   {
     clave: "precio",
     etiqueta: "Precio",
-    valor: (p) => `${money(p.Precio)} ${p.Moneda || ""}`.trim(),
+    valor: (p) => money(p.Precio, p.Moneda),
     numero: (p) => Number(p.Precio),
     gana: "menor",
+    mismaMoneda: true,
   },
   {
     clave: "superficie",
@@ -35,9 +36,10 @@ const FILAS = [
   {
     clave: "m2",
     etiqueta: "Precio por m²",
-    valor: (p) => (Number(p.Superficie) > 0 ? money(Number(p.Precio) / Number(p.Superficie)) : "—"),
+    valor: (p) => (Number(p.Superficie) > 0 ? money(Number(p.Precio) / Number(p.Superficie), p.Moneda) : "—"),
     numero: (p) => (Number(p.Superficie) > 0 ? Number(p.Precio) / Number(p.Superficie) : null),
     gana: "menor",
+    mismaMoneda: true,
   },
   { clave: "tipo", etiqueta: "Tipo", valor: (p) => tipoLabel(p.IdTipo) },
   { clave: "localidad", etiqueta: "Localidad", valor: (p) => localidadLabel(p.IdLocalidad) },
@@ -75,6 +77,8 @@ const FILAS = [
 
 function ganadoras(fila, propiedades) {
   if (!fila.numero) return [];
+  // Pesos y dólares no se comparan entre sí
+  if (fila.mismaMoneda && new Set(propiedades.map((p) => p.Moneda || "ARS")).size > 1) return [];
   const valores = propiedades.map(fila.numero);
   if (valores.some((v) => v === null || Number.isNaN(v))) return [];
   const mejor = fila.gana === "menor" ? Math.min(...valores) : Math.max(...valores);
@@ -148,7 +152,7 @@ export default function Comparar() {
                 <Link href={`/propiedad/${p.IdPropiedad}`} asChild>
                   <Direccion activeOpacity={0.7}>
                     <DireccionTexto numberOfLines={2}>
-                      {p.Barrio} · {p.Calle} {p.Numeracion}
+                      {direccion(p.Barrio, p.Calle, p.Numeracion)}
                     </DireccionTexto>
                   </Direccion>
                 </Link>

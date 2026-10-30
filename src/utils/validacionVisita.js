@@ -21,7 +21,7 @@ export function mostrarTelefono(digitos) {
   return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`;
 }
 
-export const telefonoParaApi = (digitos) => `+54${soloDigitos(digitos)}`;
+export const telefonoParaApi = (digitos) => `+549${soloDigitos(digitos)}`;
 
 export function errorTelefono(digitos) {
   const d = soloDigitos(digitos);

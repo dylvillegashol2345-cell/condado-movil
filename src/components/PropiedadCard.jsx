@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
 import { IMG_PROPIEDAD_FALLBACK } from "../utils/catalogos";
-import { money, superficie as fmtSuperficie } from "../utils/format";
+import { direccion, money, superficie as fmtSuperficie } from "../utils/format";
 import BotonComparar from "./BotonComparar";
 import BotonFavorito from "./BotonFavorito";
 import EtiquetaEco from "./EtiquetaEco";
@@ -12,6 +12,7 @@ export default function PropiedadCard({
   imagen,
   tipo,
   precio,
+  moneda,
   barrio,
   calle,
   numeracion,
@@ -39,10 +40,8 @@ export default function PropiedadCard({
       </Portada>
 
       <Cuerpo>
-        <Precio>{money(precio)}</Precio>
-        <Titulo>
-          {barrio} · {calle} {numeracion}
-        </Titulo>
+        <Precio>{money(precio, moneda)}</Precio>
+        <Titulo>{direccion(barrio, calle, numeracion)}</Titulo>
 
         <Ubicacion>
           <Ionicons name="location-outline" size={13} color="#a0918a" />

@@ -11,7 +11,7 @@ import EtiquetaEco from "../../components/EtiquetaEco";
 import FichaAmbiental from "../../components/FichaAmbiental";
 import { obtenerPropiedad } from "../../services/propiedades";
 import { IMG_PROPIEDAD_FALLBACK, localidadLabel, tipoLabel } from "../../utils/catalogos";
-import { money, superficie as fmtSuperficie } from "../../utils/format";
+import { direccion, money, superficie as fmtSuperficie } from "../../utils/format";
 import { normalizarImagen } from "../../utils/imagenes";
 import { calcularClaseEnergetica } from "../../utils/reglas";
 import { leerCaracteristicas } from "../../utils/caracteristicas";
@@ -76,13 +76,11 @@ export default function DetallePropiedad() {
 
         <Cuerpo>
           <Fila>
-            <Precio>{money(p.Precio)}</Precio>
+            <Precio>{money(p.Precio, p.Moneda)}</Precio>
             <EtiquetaEco clase={clase} />
           </Fila>
 
-          <Direccion>
-            {p.Barrio} · {p.Calle} {p.Numeracion}
-          </Direccion>
+          <Direccion>{direccion(p.Barrio, p.Calle, p.Numeracion)}</Direccion>
 
           <Ubicacion>
             <Ionicons name="location-outline" size={14} color="#a0918a" />
@@ -122,12 +120,21 @@ export default function DetallePropiedad() {
             aislamientoTermico={p.AislamientoTermico}
           />
 
-          <Link href={`/visita/${p.IdPropiedad}`} asChild>
-            <BotonVisita activeOpacity={0.85}>
-              <Ionicons name="calendar-outline" size={18} color="#ffffff" />
-              <BotonVisitaTexto>Solicitar una visita</BotonVisitaTexto>
-            </BotonVisita>
-          </Link>
+          {p.Estado === "Disponible" ? (
+            <Link href={`/visita/${p.IdPropiedad}`} asChild>
+              <BotonVisita activeOpacity={0.85}>
+                <Ionicons name="calendar-outline" size={18} color="#ffffff" />
+                <BotonVisitaTexto>Solicitar una visita</BotonVisitaTexto>
+              </BotonVisita>
+            </Link>
+          ) : (
+            <NoDisponible>
+              <Ionicons name="lock-closed-outline" size={16} color={theme.colors.textMuted} />
+              <NoDisponibleTexto>
+                Esta propiedad está {String(p.Estado).toLowerCase()}: no se pueden pedir visitas.
+              </NoDisponibleTexto>
+            </NoDisponible>
+          )}
         </Cuerpo>
       </ScrollView>
     </Pantalla>
@@ -262,6 +269,22 @@ const BotonVisitaTexto = styled.Text`
   color: #ffffff;
   font-size: 15px;
   font-weight: 700;
+`;
+
+const NoDisponible = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: ${({ theme }) => theme.radius.sm}px;
+  background-color: ${({ theme }) => theme.colors.surface2};
+`;
+
+const NoDisponibleTexto = styled.Text`
+  flex: 1;
+  font-size: 13px;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const Subtitulo = styled.Text`

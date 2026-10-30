@@ -80,6 +80,7 @@ export default function Favoritos() {
                     imagen={normalizarImagen(item.Imagen)}
                     tipo={tipoLabel(item.IdTipo)}
                     precio={item.Precio}
+                    moneda={item.Moneda}
                     barrio={item.Barrio}
                     calle={item.Calle}
                     numeracion={item.Numeracion}

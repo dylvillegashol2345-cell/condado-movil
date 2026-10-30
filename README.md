@@ -40,7 +40,7 @@ tener margen.
 |---|---|---|
 | 1 | Consultar el catálogo de propiedades | 🟢 Terminada — FlatList conectado a la API |
 | 2 | Buscar propiedades por texto | 🟢 Terminada — barrio, calle, localidad y tipo |
-| 3 | Filtrar propiedades por tipo, localidad y rango de precio | 🟢 Terminada — chips combinables, filtrado local sobre el caché |
+| 3 | Filtrar propiedades por tipo, localidad, moneda y rango de precio | 🟢 Terminada — chips combinables, filtrado local sobre el caché; el rango se elige dentro de una moneda |
 | 4 | Consultar el detalle de una propiedad | 🟢 Terminada — ruta dinámica con ficha ambiental |
 | 5 | Gestionar propiedades favoritas | 🟢 Terminada — Zustand + persistencia en el dispositivo |
 | 6 | Solicitar una visita a una propiedad | 🟢 Terminada — formulario con `useMutation`, llega a la base como Consulta |

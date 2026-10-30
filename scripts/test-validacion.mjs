@@ -6,13 +6,14 @@ import {
   normalizarTelefono, mostrarTelefono, telefonoParaApi,
   errorTelefono, errorNombre, formatearFechaHora, errorFechaHora,
 } from "../src/utils/validacionVisita.js";
+import { direccion, money } from "../src/utils/format.js";
 
 // Teléfono
 assert.equal(normalizarTelefono("351264978494"), "3512649784");      // corta el exceso
 assert.equal(normalizarTelefono("+54 9 351 264 9784"), "3512649784"); // saca 54 y 9
 assert.equal(normalizarTelefono("(351) 264-9784"), "3512649784");
 assert.equal(mostrarTelefono("3512649784"), "351 264 9784");
-assert.equal(telefonoParaApi("3512649784"), "+543512649784");
+assert.equal(telefonoParaApi("3512649784"), "+5493512649784");
 assert.equal(errorTelefono("3512649784"), null);
 assert.ok(errorTelefono("35126497"));      // corto
 assert.ok(errorTelefono(""));              // vacío
@@ -36,4 +37,10 @@ assert.ok(errorFechaHora("31/02/2027 10:00"));                 // no existe
 assert.ok(errorFechaHora("20/10/2027 25:00"));                 // hora inválida
 assert.ok(errorFechaHora("01/01/2020 10:00"));                 // pasado
 
-console.log("Las 23 comprobaciones pasaron.");
+// Precio y dirección
+assert.equal(money(1500000), "$1.500.000");
+assert.equal(money(85000, "USD"), "USD 85.000");
+assert.equal(direccion("Centro", "San Martín", 120), "Centro · San Martín 120");
+assert.equal(direccion("Centro", "", ""), "Centro");                 // sin punto suelto
+
+console.log("Las 27 comprobaciones pasaron.");

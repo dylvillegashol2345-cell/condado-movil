@@ -7,6 +7,13 @@ export const OPCIONES_TIPO = [
   ...Object.entries(TIPOS).map(([id, nombre]) => ({ id: Number(id), label: `${nombre}s` })),
 ];
 
+export const OPCIONES_MONEDA = [
+  { id: TODOS, label: "Todas" },
+  { id: "ARS", label: "Pesos" },
+  { id: "USD", label: "Dólares" },
+];
+
+// Los rangos se aplican dentro de una moneda: no se mezclan pesos con dólares
 export const OPCIONES_PRECIO = [
   { id: TODOS, label: "Cualquier precio" },
   { id: "hasta100", label: "Hasta 100.000", min: 0, max: 100000 },
@@ -30,15 +37,16 @@ function enRango(precio, idRango) {
   return valor >= rango.min && valor < rango.max;
 }
 
-export function aplicarFiltros(propiedades, { tipo, localidad, precio }) {
+export function aplicarFiltros(propiedades, { tipo, localidad, moneda, precio }) {
   return propiedades.filter(
     (p) =>
       (tipo === TODOS || p.IdTipo === tipo) &&
       (localidad === TODOS || p.IdLocalidad === localidad) &&
+      (moneda === TODOS || (p.Moneda || "ARS") === moneda) &&
       enRango(p.Precio, precio)
   );
 }
 
-export function hayFiltrosActivos({ tipo, localidad, precio }) {
-  return tipo !== TODOS || localidad !== TODOS || precio !== TODOS;
+export function hayFiltrosActivos({ tipo, localidad, moneda, precio }) {
+  return tipo !== TODOS || localidad !== TODOS || moneda !== TODOS || precio !== TODOS;
 }

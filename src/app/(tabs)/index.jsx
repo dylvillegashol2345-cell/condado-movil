@@ -15,6 +15,7 @@ import SinResultados from "../../components/SinResultados";
 import { obtenerPropiedades } from "../../services/propiedades";
 import { localidadLabel, tipoLabel } from "../../utils/catalogos";
 import {
+  OPCIONES_MONEDA,
   OPCIONES_PRECIO,
   OPCIONES_TIPO,
   TODOS,
@@ -58,6 +59,7 @@ export default function Inicio() {
   const [busqueda, setBusqueda] = useState("");
   const [tipo, setTipo] = useState(TODOS);
   const [localidad, setLocalidad] = useState(TODOS);
+  const [moneda, setMoneda] = useState(TODOS);
   const [precio, setPrecio] = useState(TODOS);
   const [vista, setVista] = useState("lista");
   const [visibles, setVisibles] = useState(POR_PAGINA);
@@ -91,9 +93,11 @@ export default function Inicio() {
     );
   }
 
-  const filtros = { tipo, localidad, precio };
+  // Solo se ofrecen las disponibles y publicadas (RN3)
+  const disponibles = propiedades.filter((p) => p.Estado === "Disponible" && p.Publicada);
+  const filtros = { tipo, localidad, moneda, precio };
   const texto = normalizar(busqueda.trim());
-  const filtradas = aplicarFiltros(propiedades, filtros).filter((p) => coincide(p, texto));
+  const filtradas = aplicarFiltros(disponibles, filtros).filter((p) => coincide(p, texto));
 
   // Al cambiar la búsqueda o un filtro, la paginación vuelve a empezar
   const conReinicio = (cambiar) => (valor) => {
@@ -105,9 +109,15 @@ export default function Inicio() {
     setBusqueda("");
     setTipo(TODOS);
     setLocalidad(TODOS);
+    setMoneda(TODOS);
     setPrecio(TODOS);
     setVisibles(POR_PAGINA);
   };
+
+  const cambiarMoneda = conReinicio((valor) => {
+    setMoneda(valor);
+    setPrecio(TODOS);
+  });
 
   const pagina = filtradas.slice(0, visibles);
   const hayMas = visibles < filtradas.length;
@@ -116,7 +126,7 @@ export default function Inicio() {
   };
 
   // Con la lista completa, así no desaparecen opciones al filtrar
-  const localidades = opcionesLocalidad(propiedades);
+  const localidades = opcionesLocalidad(disponibles);
 
   const encabezado = (
     <>
@@ -126,7 +136,10 @@ export default function Inicio() {
       {localidades.length > 2 ? (
         <FiltroChips titulo="Localidad" opciones={localidades} activo={localidad} onCambiar={conReinicio(setLocalidad)} />
       ) : null}
-      <FiltroChips titulo="Precio" opciones={OPCIONES_PRECIO} activo={precio} onCambiar={conReinicio(setPrecio)} />
+      <FiltroChips titulo="Moneda" opciones={OPCIONES_MONEDA} activo={moneda} onCambiar={cambiarMoneda} />
+      {moneda !== TODOS ? (
+        <FiltroChips titulo="Precio" opciones={OPCIONES_PRECIO} activo={precio} onCambiar={conReinicio(setPrecio)} />
+      ) : null}
       <FiltroChips titulo="Vista" opciones={OPCIONES_VISTA} activo={vista} onCambiar={conReinicio(setVista)} />
       <Separador />
     </>
@@ -149,6 +162,7 @@ export default function Inicio() {
             imagen={normalizarImagen(item.Imagen)}
             tipo={tipoLabel(item.IdTipo)}
             precio={item.Precio}
+            moneda={item.Moneda}
             barrio={item.Barrio}
             calle={item.Calle}
             numeracion={item.Numeracion}

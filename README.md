@@ -158,7 +158,7 @@ sistema Grupo Condado copiada sin cambios desde el proyecto web.
 
 ## Stack
 
-- Expo SDK 57 + Expo Router
+- Expo SDK 58 + Expo Router
 - React Native 0.86 · React 19
 - JavaScript (sin TypeScript)
 - styled-components/native + ThemeProvider
